@@ -15,34 +15,53 @@ JSON_SET()：替换存在的，新增不存在的<br/>
 JSON_INSERT()：只新增，不替换<br/>
 JSON_REPLACE()：只替换，不新增<br/>
 JSON_REMOVE()：删除,返回剩余的
-```
-example:
+### example:
+``` sql
 mysql> SELECT JSON_TYPE('["a", "b", 1]');
+```
+运行结果
+```
 +----------------------------+
 | JSON_TYPE('["a", "b", 1]') |
 +----------------------------+
 | ARRAY                      |
 +----------------------------+
-
+```
+```sql
 mysql> SELECT JSON_TYPE('"hello"');
+```
+运行结果
+```
 +----------------------+
 | JSON_TYPE('"hello"') |
 +----------------------+
 | STRING               |
 +----------------------+
-
+```
+```sql
 mysql> SELECT JSON_TYPE('hello');
+```
+运行结果
+```
 ERROR 3146 (22032): Invalid data type for JSON data in argument 1
 to function json_type; a JSON string or JSON type is required.
-
+```
+```sql
 mysql> SELECT JSON_ARRAY('a', 1, NOW());
+```
+运行结果
+```
 +----------------------------------------+
 | JSON_ARRAY('a', 1, NOW())              |
 +----------------------------------------+
 | ["a", 1, "2015-07-27 09:43:47.000000"] |
 +----------------------------------------+
-
+```
+```sql
 mysql> SELECT JSON_OBJECT('key1', 1, 'key2', 'abc');
+```
+运行结果
+```
 +---------------------------------------+
 | JSON_OBJECT('key1', 1, 'key2', 'abc') |
 +---------------------------------------+
@@ -85,9 +104,9 @@ insert into test1 values ('{"x": "17","x": "red"}'), ('{"x":"17","x":"red","x": 
     | {"x": [3, 5, 7]} |
     +------------------+
 ## 2. 合并数组
-    有两个函数：
-    1. JSON_MERGE_PRESERVE 
-    2. JSON_MERGE_PATCH
+有两个函数：
+1. JSON_MERGE_PRESERVE 
+2. JSON_MERGE_PATCH
 对比sql语句
 ```sql
 SELECT
