@@ -43,15 +43,15 @@ RDS 运维 | 马荣海 | 马荣海
 设备安装 | 安装本地数据库服务器 | 1. 安装操作系统 <br/> 2. 安装MySQL服务器 | 2018-07-05 | 2018-07-05 ||| 完成
 程序开发 | 脱敏程序开发 | 1. 全量数据脱敏<br> 2. 增量数据脱敏 | 2018-07-05 | 2018-08-10 | 陈绍迪 || 完成
 程序部署 | 将程序部署到 ECS 上 | 1. 编写自动化程序运行脚本 <br /> 2. 设置cron进行定期执行 | 2018-08-13 | 2018-8-14 | 马荣海 || 未完成
-部分数据测试 | 测试部分数据迁移 | 11张需脱敏的表 <br/> 1张大表 <ul><li>t_project</li></ul> 4张小表<ul><li>t_user_device<li>t_user_config<li>t_withdraw_ad<li>t_user_exchange_invest_history</ul>| 2018-08-13 |2018-09-13 | 陈绍迪 | 马荣海 | 未完成
+部分数据测试 | 测试部分数据迁移 | <ul><li>t_user_invest_history </li> <li>tt_fund_invest_history </li><li>t_user </li><li>t_user_asset </li><li>t_project  </li><li>t_user_spokesman_return_detail </li><li>t_user_treasure_invest_history </li><li>t_user_level_change_log</li><li>t_user_level</li><li>t_user_recharge_history </li><li>t_user_return_proj </li><li>manaowan_amp.t_borrower </li></ul> | 2018-08-13 |2018-09-13 | 陈绍迪 | 马荣海 | 未完成
 程序运行监控 | 对程序运行结果，项目状态进行监控 | 1. 每日数据量对比 <br /> 2. 数据脱敏检查 | 2018-08-14 | 2018-09-14 | 陈绍迪|| 未完成
 全库进行迁移 | 如果程序没有出错，将进行全库的迁移 | 修改配置文件 | 2018-09-14 | 2018-09-14 |陈绍迪|| 未完成
 
 ## 4. 运行环境
 
-<del>程序运行在阿里云 ECS 服务器上，本地数据库服务器与阿里云数据库服务器都开通端口</del>
+RDS -> ECS -> 83 -> MySQL@83
 
-==RDS -> ECS -> 83 -> MySQL@83==
+![数据走向](http://ww2.sinaimg.cn/large/005zWjpngy1fucy6lqinjj30kz05lt8r.jpg)
 
 ### 4.1 83 服务器的硬/软件配
 
@@ -71,43 +71,36 @@ cpu | 英特尔酷睿六核i7-8700 | ￥2130
 
 ### 4.2 网络环境
 
-<del>ECS 服务器作为程序运行服务器，必须要与两台数据库连接通畅。并且出于安全考虑两台数据库之间不能连接</del>
->==TODO 文件一致性判断==
+>==TODO 文件一致性判断 OK==
 
 ## 5 上线准备
-
-<del>为了不影响线上系统的正常运行，程序上线时间选为晚上9点，或周末。程序上线应需要esc服务器负责人，程序开发人员在场。上线之前，确保要有权限修改crontab的配置，并编写shell让其能定时运行；</del>
 
 1. 程序上线时间选为晚上9点，相应负责人 online 或 on call
 2. 确保要有权限修改 crontab
 3. 编写的 shell 程序能定正常运行
-4. 网络各 ip 和 相关端口可以正常访问
-5. 各服务器正常
-6. 各数据库正常
+4. ecs 与线上数据库是否连通，本地服务器与 ecs 是否连通
+5. 确保服务器不处于宕机状态
+6. 确保各数据库能有权限读写，以及数据库内存足够
 
 ### 5.1 技术准备
 
-ecs服务器需要jdk1.8环境，如果不作为一个jar运行，那需要tomcat容器，用于运行程序；
-
-以及实时监控程序是否报错，如果报错应快速找出bug并进行修复；
-
-以及原始文件是否出现了不可预期的数据，导致数据错误；
+1. ecs服务器需要jdk1.8环境，如果不作为一个jar运行，那需要tomcat容器，用于运行程序
+2. 以及实时监控程序是否报错，如果报错应快速找出bug并进行修复
+3. 以及原始文件是否出现了不可预期的数据，导致数据错误
 
 #### 5.1.1 本地数据库设置
 
 1. 设置了密码认证插件为老版本的mysql_native_password
-2. 设置了服务器默认字符集为utf-8而不是8.0默认的
 
 ### 5.2 业务准备
 
-1. 项目需确保运行时，不会占用过多的系统资源，进行合理化的设置。
-2. 转移的数据是否为需要数据，如果不是，是否可以删除；
+1. 项目需确保运行时，不会占用过多的系统资源，进行合理化的设置
+2. 转移的数据是否为需要数据，如果不是，是否可以删除
 
 ### 5.3 安全保障
 
-确保数据从ecs服务器出来时就是一个脱敏的状态；
-
-确保数据没有丢失，如果丢失，需要迅速的补救，补救措施为，观察源文件，找到丢失的数据，直接进行手工插入；
+1. 确保数据从ecs服务器出来时就是一个脱敏的状态
+2. 确保数据没有丢失，如果丢失，需要迅速的补救，补救措施为，观察源文件，找到丢失的数据，直接进行手工插入
 
 ## 6. 上线演练
 
@@ -115,21 +108,22 @@ ecs服务器需要jdk1.8环境，如果不作为一个jar运行，那需要tomca
 
 程序演练已经过多种数据结合，binlog同步来的数据，有INSERT，UPDATE，DELETE，alter，drop，需要进行各种组合数据操作。已测试过多种组合，以及所有情况在一个文件里的情况
 
-#### 6.1.1 dump脱敏流程图(既是全量迁移)
+#### 6.1.1 dump脱敏流程图
 
-![dump脱敏流程图](http://ww.sinaimg.cx/005zWjpngy1fu7vvg7xy0j30fo0gtwff.png)
+![dump脱敏流程图](http://ww2.sinaimg.cn/large/005zWjpngy1fucy41xpzxj30fv0ex75d.jpg)
 
-#### 6.1.2 binlog脱敏流程图(既是增量与差分迁移)
+<del>#### 6.1.2 binlog脱敏流程图(既是增量与差分迁移)
 
-![binlog脱敏流程图](http://ww.sinaimg.cx/005zWjpngy1fu7vwho0ydj30e30cp0t3.png)
+[//]:#(![binlog脱敏流程图](http://ww2.sinaimg.cn/large/005zWjpngy1fu7vwho0ydj30e30cp0t3.jpg))
+
+</del>
 
 ### 6.2 演练问题处理机制
 
-演练过程中，可能会出现，数据脱敏失败，数据错位，数据输出失败等问题；
+演练过程中，可能会出现，数据脱敏失败，数据错位，数据输出失败等问题
 
-如果出现脱敏失败，则利用单元测试检查脱敏规则，如果规则没有问题，就检查脱敏逻辑，看是否逻辑问题；
-
-如果出现数据错位，检查循环是否成功，是否循环条数与实际条数不匹配，看是否代码逻辑导致的；
+1. 如果出现脱敏失败，则利用单元测试检查脱敏规则，如果规则没有问题，就检查脱敏逻辑，看是否逻辑问题
+2. 如果出现数据错位，检查循环是否成功，是否循环条数与实际条数不匹配，看是否代码逻辑导致的
 
 ### 6.3 脱敏程序运行占用硬件信息
 
@@ -137,51 +131,51 @@ ecs服务器需要jdk1.8环境，如果不作为一个jar运行，那需要tomca
 
 程序占用率如图
 
-![程序占用率](http://ww.sinaimg.cx/005zWjpngy1fubel9k1vjj30k403sjri.jpg)
+![程序占用率](http://ww2.sinaimg.cn/large/005zWjpngy1fubel9k1vjj30k403sjri.jpg)
 
 峰值占用率
 
-![程序最高占用率](http://ww.sinaimg.cx/005zWjpngy1fubeld9y7gj30g4025t8n.jpg)
+![程序最高占用率](http://ww2.sinaimg.cn/large/005zWjpngy1fubeld9y7gj30g4025t8n.jpg)
 
-以上可以看出，cpu最高占用率在34.3%，而内存占用率在6.8%既是544MB左右；相对来说，内存占用率不是很高，但是cpu占用率会变换；
+以上可以看出，cpu最高占用率在34.3%，而内存占用率在6.8%既是544MB左右；相对来说，内存占用率不是很高，但是cpu占用率会变换
 
 测试各个接口的cpu占用率与内存占用率
 
 #### 启动时
 
-![启动时](http://ww.sinaimg.cx/005zWjpngy1fubis7dwcij30em0123yc.jpg)
+![启动时](http://ww2.sinaimg.cn/large/005zWjpngy1fubis7dwcij30em0123yc.jpg)
 
 #### 初始化
 
-![初始化](http://ww.sinaimg.cx/005zWjpngy1fubit0rumgj30eu06sdg5.jpg)
+![初始化](http://ww2.sinaimg.cn/large/005zWjpngy1fubit0rumgj30eu06sdg5.jpg)
 
 #### 初始化第二步
 
-![初始化第二步](http://ww.sinaimg.cx/005zWjpngy1fubitrvy6jj30en04odfy.jpg)
+![初始化第二步](http://ww2.sinaimg.cn/large/005zWjpngy1fubitrvy6jj30en04odfy.jpg)
 
 #### 设置脱敏信息
 
-![设置脱敏信息](http://ww.sinaimg.cx/005zWjpngy1fubiue7molj30f803aweh.jpg)
+![设置脱敏信息](http://ww2.sinaimg.cn/large/005zWjpngy1fubiue7molj30f803aweh.jpg)
 
 #### 设置不需要备份的表
 
-![设置不需要备份的表](http://ww.sinaimg.cx/005zWjpngy1fubius6ptaj30ew01at8j.jpg)
+![设置不需要备份的表](http://ww2.sinaimg.cn/large/005zWjpngy1fubius6ptaj30ew01at8j.jpg)
 
 #### dump文件脱敏
 
-![dump文件脱敏](http://ww.sinaimg.cx/005zWjpngy1fubivdj7i2j30eu014a9w.jpg)
+![dump文件脱敏](http://ww2.sinaimg.cn/large/005zWjpngy1fubivdj7i2j30eu014a9w.jpg)
 
 #### binlog文件脱敏
 
-![binlog文件脱敏](http://ww.sinaimg.cx/005zWjpngy1fubj5p2zugj30em012744.jpg)
+![binlog文件脱敏](http://ww2.sinaimg.cn/large/005zWjpngy1fubj5p2zugj30em012744.jpg)
 
-从上诉测试可以发现，只有初始化的两步会对cpu占用将近50，而对文件进行脱敏时，cou占用率大概高的有25%左右，这只是一部分测试；
+从上诉测试可以发现，只有初始化的两步会对cpu占用将近50，而对文件进行脱敏时，cou占用率大概高的有25%左右，这只是一部分测试
 
 #### 多次初始化测试
 
-![多次初始化测试](http://ww.sinaimg.cx/005zWjpngy1fubjy27s44j30eh0p4tah.jpg)
+![多次初始化测试](http://ww2.sinaimg.cn/large/005zWjpngy1fubjy27s44j30eh0p4tah.jpg)
 
-通过上诉的测试，可以发现，内存占用率会达到一个峰值，这是由于jvm限制的原因，而cpu占用率，可以达到50%，所以这个程序，总的来说，还是挺占资源的；
+通过上诉的测试，可以发现，内存占用率会达到一个峰值，这是由于jvm限制的原因，而cpu占用率，可以达到50%，所以这个程序，总的来说，还是挺占资源的
 
 ## 7. 试运行
 
@@ -189,36 +183,36 @@ ecs服务器需要jdk1.8环境，如果不作为一个jar运行，那需要tomca
 
 ### 7.1 上线功能介绍
 
-上线的主要功能为，对dump和binlog的数据文件进行脱敏处理，并让数据处理成mysql可以认识的结构；
+进行dump同步，第一次进行全量同步，第二次进行日增量同步，运用 ON DUPLICATE KEY UPDATE 进行保存或更新操作
 
 ### 7.2 试运行方式及其合理性分析
 
-运行的方式为借口方式，使用curl命令访问接口路径，来实现所有操作的入口；
+运行的方式为接口方式，使用curl命令访问接口路径，来实现所有操作的入口
 
 该方法相对于原来的jar包运行来说，持久化了操作接口，并且，这个操作本来就是要定期执行的，所以完全可以写成接口模式，相交与原来的jar包模式，少了很多jvm初始化的操作
 
 ### 7.3 试运行检验的重点环节
 
-数据是否脱敏，数据是否导入到本地；
-
-主要检测方法为数据量检测，与抽样脱敏检测；
+1. 数据是否脱敏
+2. 数据是否导入到本地
+3. 主要检测方法为数据量检测与抽样脱敏检测
 
 ### 7.4 试运行上线范围及时间选择
 
-测试周期为一个月，全部功能都会上线；
+测试周期为一个月，一个月之后数据如果没有出现什么问题，全部功能所有表都会上线
 
 ## 8. 技术支持
 
 ### 8.1 运行支持方式
 
-支持网页访问，与命令行访问，也就是支持接口访问；
+支持网页访问，与命令行访问，也就是支持接口访问
 
 ### 8.2 问题处理流程
 
-如果使用人员发现系统出现bug，因第一时间报告给开发人员，并进行调试修改；
+如果使用人员发现系统出现bug，因第一时间报告给开发人员，并进行调试修改
 
 ## 附件
 
 ### 本地主机配置表
 
-![本地主机配置](http://ww.sinaimg.cx/005zWjpngy1fu4gpc7tu7j30fc07ujs9.jpg)
+![本地主机配置](http://ww2.sinaimg.cn/large/005zWjpngy1fu4gpc7tu7j30fc07ujs9.jpg)
