@@ -1,6 +1,6 @@
 #添加新用户
-useradd -m -g users -G wheel -s /bin/bash bo.chao
-passwd bo.chao
+useradd -m -g users -G wheel -s /bin/bash userName
+passwd userName
 
 #防火墙设置
 # 对外开放3306端口，供外部的计算机访问
