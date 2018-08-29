@@ -27,3 +27,9 @@ GRANT INSERT, UPDATE, DELETE ON *.* TO 'app_write';
 GRANT  all privileges on *.* to test@'%';
 GRANT pdc_developer to test@'%'
 ```
+
+## 刷新
+
+```sql
+flush  privileges;
+```
