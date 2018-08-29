@@ -1,6 +1,6 @@
 # GIT_NOTE
 
-### Command line instructions
+## Command line instructions
 
 ```bash
 Git global setup
@@ -8,7 +8,7 @@ git config --global user.name ""
 git config --global user.email ""
 ```
 
-### Create a new repository
+## Create a new repository
 
 ```bash
 git clone
@@ -19,7 +19,7 @@ git commit -m "add README"
 git push -u origin master
 ```
 
-### Existing folder
+## Existing folder
 
 ```bash
 cd existing_folder
@@ -30,7 +30,7 @@ git commit -m "Initial commit"
 git push -u origin master
 ```
 
-### Existing Git repository
+## Existing Git repository
 
 ```bash
 cd existing_repo
@@ -39,7 +39,7 @@ git push -u origin --all
 git push -u origin --tags
 ```
 
-### 忽略修改同步
+## 忽略修改同步
 
 ```bash
 git fetch --all
