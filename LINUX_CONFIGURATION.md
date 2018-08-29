@@ -21,13 +21,12 @@ firewall-cmd --zone=public --add-port=3306/tcp --permanent
 该命令方式添加的端口，可在/etc/firewalld/zones中的对应配置文件中得到体现
 #重启防火墙
 systemctl restart firewalld
+说明：
+1. firewall-cmd：Linux中提供的操作firewall的工具。
+2. –zone：指定作用域。
+3. –add-port=80/tcp：添加的端口，格式为：端口/通讯协议。
+4. –permanent：表示永久生效，没有此参数重启后会失效。
 ```
-
-> 说明：
-> 1. firewall-cmd：Linux中提供的操作firewall的工具。
-> 2. –zone：指定作用域。
-> 3. –add-port=80/tcp：添加的端口，格式为：端口/通讯协议。
-> 4. –permanent：表示永久生效，没有此参数重启后会失效。
 
 ## 软连接
 
@@ -36,4 +35,14 @@ systemctl restart firewalld
 ln -s fromPath aimsPath
 #关闭软链接
 rm -rf aimsPath
+```
+
+## openVPN
+
+```shell
+在*.ovpn文件最后加上
+auth-user-pass pass文件路径
+pass文件配置为:
+username
+password
 ```
