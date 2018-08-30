@@ -1,15 +1,18 @@
 # linux操作
 
-## 添加新用户
+## 用户操作
+
+### 添加用户
 
 ```shell
 #此命令创建了一个用户sam，其中-d和-m选项用来为登录名sam产生一个主目录/usr/sam（/usr为默认的用户主目录所在的父目录）。
 useradd –d /home/username -m username
+passwd userName
 
-
+useradd -g test2 -m  utest                       #添加utest到test2组并创建用户目录（要先创建test2组）
+useradd -g test2 -M -s /sbin/nologin  qtest      #添加qtest到test2组不创建用户目录，并且不可用于登录
 
 useradd -m -g users -G wheel -s /bin/bash userName
-passwd userName
 ```
 
 ## 防火墙设置
