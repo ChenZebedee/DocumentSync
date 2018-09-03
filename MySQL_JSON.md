@@ -214,7 +214,7 @@ JSON_MERGE_PATCH('[10, 20]', '{"a": "x", "b": "y"}') AS Patch4\G
 
 CAST()函数进行转换
 
-> ### example：
+>example：
 >ORDER BY CAST(JSON_EXTRACT(jdoc, '$.id') AS UNSIGNED);
 
 主要用于排序时使用；
