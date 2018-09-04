@@ -20,7 +20,7 @@ hadoop其实就是开源的、可靠的、可扩展的分布式并行计算框�
 
 由上图可知，当我们再遇到大数据的的情况下时，会用到hadoop这个东西
 
-## hadoop怎么用
+## hadoop包括什么
 
 ***
 
@@ -37,4 +37,62 @@ hadoop其实就是开源的、可靠的、可扩展的分布式并行计算框�
 
 就是对一行数据进行拆解，然后把多行数据进行同key合并
 
-### 
+### yarn资源管理器
+
+在hadoop MRv1版本中，都是直接mapreduce提交job到namenode节点中，namenode来进行资源分配，也就是将资源管理和任务调度的管理放到了一起管理。而到了 MRv2 版本中添加了yarn将资源管理和任务调度管理分开了
+
+## hadoop怎么用
+
+***
+
+### hadoop版本
+
+#### apache社区版
+
+这个版本适合想在hadoop领域深入研究的人员，用这个版本来进行深入研究
+
+#### Cloudera版本
+
+这个版本是目前应用比较广的一个版本目前最新的是cdh6，cdh5中包含最高的hadoop版本为2.6，而cdh6目前来说不是刚需，没有什么大的改动。并且不用考虑各个组件的版本兼容问题
+
+#### Hortonworks版本
+
+开源免费的版本，分为商业版和免费版，在apache版本上修改的，非常具有apache特色
+
+而目前实验主要用CDH版本,具体生产环境需要视情况而定，不过大部分学了CDH版本后就会直接将CDH用于生产中
+
+### hadoop安装
+
+#### ClouderaManager安装
+
+打包安装，安装一个ClouderManager就可以全部安装，并且可以下载包含bin的软件包进行绿色安装
+
+#### apache安装
+
+可以下载源码进行安装，或者下载已经打过包的包含bin文件的项目进行绿色安装
+
+#### Hortonworks这个版本有兴趣的去了解一下
+
+### hadoop使用
+
+#### hadoop基本命令
+
+hadoop fs -command /path 或者 hdfs dfs -command /path
+
+第一种是可以用于全部的文件操作系统，而第二种只能用于hdfs上的文件系统操作
+
+#### mapreduce的运用
+
+#### 结合hive
+
+#### 结合zookeeper
+
+#### 结合hbase
+
+#### 结合kafka
+
+#### 结合spark
+
+### 总结
+
+hdfs是一个用于存储文件的分布式文件系统，apreduce是用于并行计算的一个框架，而yarn是用于资源调度的
