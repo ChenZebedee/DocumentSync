@@ -66,7 +66,11 @@ DROP ROLE 'app_read', 'app_write';
 ## 查看所有权限
 
 ```sql
-
+查看MYSQL数据库中所有用户
+SELECT DISTINCT CONCAT('User: ''',user,'''@''',host,''';') AS query FROM mysql.user;
+SHOW GRANTS
+    [FOR user_or_role
+        [USING role [, role] ...]]
 ```
 
 ## 查看用户权限

@@ -7,3 +7,11 @@
 ```sql
 SHOW PROCESSLIST;
 ```
+
+## 修改数据库名
+
+```shell
+mysqladmin -u root -p create hwei
+mysqldump Hwei | mysql -u root -p hwei
+mysql> drop database Hwei
+```
