@@ -17,3 +17,16 @@ docker pull ubuntu:18.04
 ```shell
 docker run --name hadoop -t -i 'ubuntu:18.04'
 ```
+
+## mysql运行
+
+```shell
+docker run -p 13306:3306 --name mymysql -v $PWD/conf:/etc/mysql/conf.d -v $PWD/logs:/logs -v $PWD/data:/va/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0
+```
+
+## 查看ip地址
+
+```shell
+docker inspect -f '{{.Name}} - {{.NetworkSettings.IPAddress }}' $(docker ps -aq)
+docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
+```

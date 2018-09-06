@@ -49,3 +49,9 @@ pass文件配置为:
 username
 password
 ```
+
+## 查看centos版本
+
+```shell
+cat /etc/redhat-release
+```

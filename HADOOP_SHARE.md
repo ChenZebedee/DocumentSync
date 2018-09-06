@@ -95,4 +95,4 @@ hadoop fs -command /path 或者 hdfs dfs -command /path
 
 ### 总结
 
-hdfs是一个用于存储文件的分布式文件系统，apreduce是用于并行计算的一个框架，而yarn是用于资源调度的
+hdfs是一个用于存储文件的分布式文件系统，mapreduce是用于并行计算的一个框架，而yarn是用于资源调度的
