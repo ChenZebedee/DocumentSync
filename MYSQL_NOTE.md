@@ -15,3 +15,10 @@ mysqladmin -u root -p create hwei
 mysqldump Hwei | mysql -u root -p hwei
 mysql> drop database Hwei
 ```
+
+## 索引操作
+
+```sql
+show index from tablename\G
+ALTER TABLE tablename DROP INDEX index_name;
+```

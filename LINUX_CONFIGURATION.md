@@ -55,3 +55,9 @@ password
 ```shell
 cat /etc/redhat-release
 ```
+
+## 多列数据，每两行合成一行，用逗号分隔
+
+```shell
+ cat t_3rdapi_query_data.c | xargs -n2 | tr ' ' ,
+```
