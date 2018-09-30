@@ -55,3 +55,9 @@ git pull origin master
     helper = store
 之后输入一次密码
 ```
+
+## GIT 撤销修改
+
+```bash
+git checkout -- $[FILE]
+```
