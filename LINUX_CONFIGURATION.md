@@ -76,3 +76,10 @@ awk 'BEGIN{FS="";RS="";OFS="";ORS=""}{print $0}'
 ```shell
 grep -v ""
 ```
+
+## 变量值最为新变量名
+```shell
+name=ateatea
+b=name
+a=eval echo '$'${b}
+```
