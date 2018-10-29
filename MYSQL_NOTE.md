@@ -20,5 +20,14 @@ mysql> drop database Hwei
 
 ```sql
 show index from tablename\G
-ALTER TABLE tablename DROP INDEX index_name;
+ALTER TABLE table_name DROP INDEX index_name;
+ALTER TABLE table_name ADD INDEX index_name (column_name);
+--组合索引
+ALTER TABLE table_name ADD INDEX index_name ( column1, column2, column3 );
+```
+
+## 获取索引(除去主键)
+
+```shell
+mysql -u -p'' -Ne"show index from ${DATABASE}.${TABLE}\g" | awk 'BEGIN{OFS=","}{ print $5,$3}' | grep -v "PRIMARY"
 ```

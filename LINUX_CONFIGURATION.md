@@ -61,3 +61,18 @@ cat /etc/redhat-release
 ```shell
  cat t_3rdapi_query_data.c | xargs -n2 | tr ' ' ,
 ```
+
+## sed 删除包含某字符串的行
+```shell
+sed '/str/d;/str1/d' file_name > file_name2
+```
+
+## awk 指定行分割，列分隔
+```shell
+awk 'BEGIN{FS="";RS="";OFS="";ORS=""}{print $0}'
+```
+
+## grep 除去匹配到的
+```shell
+grep -v ""
+```
