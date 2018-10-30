@@ -83,3 +83,8 @@ name=ateatea
 b=name
 a=eval echo '$'${b}
 ```
+
+## 删除开头为 KEY 或 INDEX 的行
+```shell
+sed "/^\s*\<KEY\>\|\<INDEX\>/d" test.sql
+```
