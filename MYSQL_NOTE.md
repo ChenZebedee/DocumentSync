@@ -31,3 +31,8 @@ ALTER TABLE table_name ADD INDEX index_name ( column1, column2, column3 );
 ```shell
 mysql -u -p'' -Ne"show index from ${DATABASE}.${TABLE}\g" | awk 'BEGIN{OFS=","}{ print $5,$3}' | grep -v "PRIMARY"
 ```
+
+## 添加 login-path 
+```sql
+mysql_config_editor set --login-path=client --host=localhost --user=admin --password
+```

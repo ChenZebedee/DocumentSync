@@ -88,3 +88,10 @@ a=eval echo '$'${b}
 ```shell
 sed "/^\s*\<KEY\>\|\<INDEX\>/d" test.sql
 ```
+
+## docker 路由映射
+```shell
+iptables -t nat -A DOCKER ! -i br-22e18b2feb56 -p tcp -m tcp --dport 8080 -j DNAT --to-destination 192.168.5.33:8080
+iptables -t nat -A POSTROUTING -s 192.168.5.33/32 -d 192.168.5.33/32 -p tcp -m tcp --dport 8080 -j  MASQUERADE
+iptables -t filter -A DOCKER -d 192.168.5.33/32 ! -i br-22e18b2feb56 -o br-22e18b2feb56 -p tcp -m tcp --dport 8080 -j ACCEPT
+```
