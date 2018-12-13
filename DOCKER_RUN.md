@@ -42,6 +42,10 @@ docker run --name docker_postgre --memory-swap -1 -m 6G -p 5432:5432 -e POSTGRES
 docker update -${} ${} ${container_name}
 ```
 
+## docker 添加新网络
+```shell
+docker network create -d bridge --subnet=192.168.5.0/24 --gateway=192.168.5.1 -o com.docker.network.bridge.name=br-hadoop hadoop-br0
+```
 
 ## 启动伪分布式
 ```shell
