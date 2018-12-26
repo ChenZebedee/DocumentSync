@@ -25,8 +25,8 @@ GRANT INSERT, UPDATE, DELETE ON *.* TO 'app_write';
 
 ```sql
 --更新密码
-ALTER USER 'ro更改加密规则ot'@'%' IDENTIFIED BY 'Mnw!@#456' PASSWORD EXPIRE NEVER;
---
+ALTER USER 'root'@'%' IDENTIFIED BY 'Mnw!@#456' PASSWORD EXPIRE NEVER;
+--更改加密规则
 ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'Mnw!@#456';
 ```
 
