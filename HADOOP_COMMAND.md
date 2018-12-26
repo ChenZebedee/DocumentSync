@@ -115,7 +115,7 @@ tez-site.xml 内容
 <configuration>
         <property>
                 <name>tez.lib.uris</name>
-                <value>${fs.defaultFS}/apps/tez-0.8.3/,${fs.defaultFS}/apps/tez-0.8.3/lib</value>
+                <value>${fs.defaultFS}/apps/tez-0.8.5/,${fs.defaultFS}/apps/tez-0.8.5/lib</value>
         </property>
 </configuration>
 ```
