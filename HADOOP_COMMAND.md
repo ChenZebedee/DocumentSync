@@ -2,7 +2,6 @@
 
 ## hive 权限控制
 ```sql
-
 create role query;
 grant SELECT,SHOW_DATABASE on database rme to role query;
 grant role query to user fengkong with admin option;
@@ -12,6 +11,30 @@ show grant role query;
 grant ALL on database fengkong to user hadoop;
 revoke ALL on database fengkong from user hadoop;
 ```
+### 需要有建库权限
+```sql
+--赋权超级权限
+grant all to user hadoop;
+```
+即可正常建库
+
+## hive 中文乱码
+
+1. 在 `${HIVE_HOME}/conf` 下的 `hive-env.sh` 文件里添加
+    ```shell
+        export HADOOP_OPTS="$HADOOP_OPTS -Dfile.encoding=UTF-8"
+    ```
+2. 在 MySQL 中修改 `COLUMNS_V2,TABLE_PARAMS,PARTITION_PARAMS,PARTITION_KEYS,INDEX_PARAMS` 5张表的字符集
+    ```
+        alter table COLUMNS_V2 modify column COMMENT varchar(256) character set utf8;
+        alter table TABLE_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8;
+        alter table PARTITION_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8 ;
+        alter table PARTITION_KEYS modify column PKEY_COMMENT varchar(4000) character set utf8;
+        alter table INDEX_PARAMS modify column PARAM_VALUE varchar(4000) character set utf8;
+    ```
+3. 在 `hive-site.xml` 中的 jdbc 连接后面添加 `&amp;useSSL=false&amp;useUnicode=true&amp;characterEncoding=UTF-8`
+4. 重启 hive 
+
 
 ## tez cdh 打包 （针对 centos7）
 
