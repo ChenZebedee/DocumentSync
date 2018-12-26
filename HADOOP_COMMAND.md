@@ -115,7 +115,7 @@ tez-site.xml 内容
 <configuration>
         <property>
                 <name>tez.lib.uris</name>
-                <value>${fs.defaultFS}/apps/tez-0.5.3.tar.gz</value>
+                <value>${fs.defaultFS}/apps/tez-0.8.3/,${fs.defaultFS}/apps/tez-0.8.3/lib</value>
         </property>
 </configuration>
 ```
@@ -133,8 +133,12 @@ echo "export HADOOP_CLASSPATH=\${HADOOP_CLASSPATH}:\${TEZ_CONF_DIR}:\${TEZ_JARS}
 ```
 
 在 hdfs 上添加 tez 的压缩包
-```
+```s
 hadoop fs -mkdir /apps
+hdfs dfs -put tez-0.8.5 /apps/
 hadoop fs -copyFromLocal tez-0.5.3.tar.gz /apps/
 ```
 
+在 hdfs 上和本地的 tez lib 目录中，还有 hive 的 lib 目录中添加 kryo-2.22.jar 包，不然会报 `Caused by: java.lang.ClassNotFoundException: com.esotericsoftware.kryo.Serializer` 的错误
+
+在 beeline 连接中使用 `SET hive.execution.engine=tez;` 来开启使用 tez ，同样，将 tez 改成 mr 可以用回 mapreduce 执行模式
