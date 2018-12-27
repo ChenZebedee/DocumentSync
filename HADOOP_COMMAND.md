@@ -136,7 +136,7 @@ echo "export HADOOP_CLASSPATH=\${HADOOP_CLASSPATH}:\${TEZ_CONF_DIR}:\${TEZ_JARS}
 ```s
 hadoop fs -mkdir /apps
 hdfs dfs -put tez-0.8.5 /apps/
-hadoop fs -copyFromLocal tez-0.5.3.tar.gz /apps/
+hadoop fs -copyFromLocal tez-0.8.5.tar.gz /apps/
 ```
 
 在 hdfs 上和本地的 tez lib 目录中，还有 hive 的 lib 目录中添加 kryo-2.22.jar 包，不然会报 `Caused by: java.lang.ClassNotFoundException: com.esotericsoftware.kryo.Serializer` 的错误
