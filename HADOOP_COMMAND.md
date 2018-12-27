@@ -142,3 +142,8 @@ hadoop fs -copyFromLocal tez-0.5.3.tar.gz /apps/
 在 hdfs 上和本地的 tez lib 目录中，还有 hive 的 lib 目录中添加 kryo-2.22.jar 包，不然会报 `Caused by: java.lang.ClassNotFoundException: com.esotericsoftware.kryo.Serializer` 的错误
 
 在 beeline 连接中使用 `SET hive.execution.engine=tez;` 来开启使用 tez ，同样，将 tez 改成 mr 可以用回 mapreduce 执行模式
+
+
+
+## hive beeline 添加队列
+在 beeline 连接的地址后面添加 `?mapreduce.job.queuename=hadoop`
