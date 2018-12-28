@@ -57,3 +57,8 @@ hbase主要包括 Hmaster 和 HRegionServer
 
 ### job 任务 kill
 通过 ```hadoop job -kill ${jobID}``` 来杀死 job 任务
+
+### 有损坏块时的处理
+报错： `The number of live datanodes 3 has reached the minimum number 0.`
+
+解决办法： `hadoop dfsadmin -safemode leave && hdfs fsck / -delete`
