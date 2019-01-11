@@ -24,7 +24,7 @@ git push -u origin master
 ```bash
 cd existing_folder
 git init
-git remote add origin
+git remote add origin "http address"
 git add .
 git commit -m "Initial commit"
 git push -u origin master
