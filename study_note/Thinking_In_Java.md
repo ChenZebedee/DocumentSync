@@ -52,6 +52,13 @@
 27. Index -- 索引,指数
 ```
 
+
+## Contents(What's Inside) -- 内容(什么内容) -- 就是目录的意思
+
+
+
+
+
 ## Concurrency 
 ### Up to point,you've been learning about `squential` programming.Everything in a program happens one step at a time. 
 
@@ -96,3 +103,13 @@ so that those portions either appear to be execution concurrently,
 12. execution -- 执行
 13. concurrently -- 同时
 
+or if multiple processors are available,
+或者可以使用多线程处理器
+1. multiple -- 多，多种
+2. processors -- 处理器 -- pro ces sors
+3. available -- 可用的
+
+actually do execute simultaneously.
+我是可以同时执行
+1. actually -- 其实
+2. simultaneously -- 同时,并 -- simul ta neous ly
