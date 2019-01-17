@@ -55,6 +55,38 @@
 
 ## Contents(What's Inside) -- 内容(什么内容) -- 就是目录的意思
 
+### concurrency -- 并发 page 797
+#### The many faces of concurrencry -- 并发的多面性
+    1. faster execution -- 快速启动
+    2. Improving code design -- 代码设计优化
+        --> Improving -- 提高，改善，优于，演变
+        --> design -- 设计
+#### Basic threading -- 基本线程
+--> basic -- 基本
+--> threading -- 线程
+
+    1. Defining tasks -- 明确任务
+        --> defining -- 确定，明确，限定
+        --> tasks -- 任务,工作，作业
+    2. The Thread class -- 线程类
+    3. Using Executors -- 使用执行者
+        --> Executors -- 执行者
+    4. producing return values from tasks -- 任务产生的返回值
+        --> producing -- 产生，生产，产，创造，做
+    5. sleeping -- 睡眠
+    6. priority -- 优先权
+    7. Yielding -- 生产，妹妹
+    8. Daemon threads -- 守护线程
+    9. coding variations -- 代码变异
+        --> variations -- 变异，变动，变奏，异样
+    10. Terminology -- 术语
+    11. joining a thread -- 添加线程
+    12. Creating responsive user interfaces -- 创建用户响应接口
+        --> responsive -- 响应
+    13. Thread groups -- 线程组（线程池？）
+    14. Catching exception -- 捕捉异常
+        --> catching -- 捕捉
+        --> exception -- 列外(就是程序出现预先所知错误)
 
 
 
