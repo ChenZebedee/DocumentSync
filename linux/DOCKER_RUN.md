@@ -51,3 +51,12 @@ docker network create -d bridge --subnet=192.168.5.0/24 --gateway=192.168.5.1 -o
 ```shell
 docker run -d --net hadoop-br0 --ip 192.168.5.33 -p10023:22 -p 50010:50010 -p 50075:50075 -p 50475:50475 -p 50020:50020 -p 50070:50070 -p 50470:50470 -p 8020:8020 -p 8485:8485 -p 8480:8480 -p 8019:8019 -p 8032:8032 -p 8030:8030 -p 8031:8031 -p 8033:8033 -p 8088:8088 -p 8040:8040 -p 8042:8042 -p 8041:8041 -p 10020:10020 -p 19888:19888 -p 60000:60000 -p 60010:60010 -p 60020:60020 -p 60030:60030 -p 2181:2181 -p 2888:2888 -p 3888:3888 -p 9083:9083 -p 10000:10000 -h pd-csd --name pd-csd ssh:zf
 ```
+
+## 网络带宽限制
+```shell
+#本地安装 iproute
+#限制到3M/s
+sudo tc qdisc add dev docker_game root tbf rate 30Mbit latency 50ms burst 10000
+#删除
+sudo tc qdisc del dev docker_game root tbf rate 30Mbit latency 50ms burst 10000
+```

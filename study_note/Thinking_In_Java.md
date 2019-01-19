@@ -87,7 +87,27 @@
     14. Catching exception -- 捕捉异常
         --> catching -- 捕捉
         --> exception -- 列外(就是程序出现预先所知错误)
+#### sharing resources -- 共享资源
+--> sharing(share) -- 分享，共享
+--> resources -- 资源
 
+    1. Improperly accessing resources -- 不正常的资源访问
+        --> improperly -- 不当
+        --> accessing -- 访问，连接
+    2. Resolving shared resource contention -- 解析共享资源争夺
+        --> resolving -- 解析
+        --> contention -- 争夺，争论
+    3. Atomicity and volatility -- 原子性和挥发性(可变性？)
+        --> atomicity -- 原子性
+        --> volatility -- 挥发性，异变，短暂
+    4. Atomic classes -- 核类？原子类？
+        --> atomic -- 原子，核
+    5. Critical sections -- 严重的部分
+        --> critical -- 危急，临界，严重
+        --> sections -- 部分，章节，剖面
+    6. Synchronizing on other objects -- 
+        --> synchronizing -- 同步
+        --> 
 
 
 
