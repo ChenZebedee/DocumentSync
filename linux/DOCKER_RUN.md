@@ -56,7 +56,7 @@ docker run -d --net hadoop-br0 --ip 192.168.5.33 -p10023:22 -p 50010:50010 -p 50
 ```shell
 #本地安装 iproute
 #限制到3M/s
-sudo tc qdisc add dev docker_game root tbf rate 30Mbit latency 50ms burst 10000
+sudo tc qdisc add dev docker_game root tbf rate 50Mbit latency 50ms burst 10000
 #删除
-sudo tc qdisc del dev docker_game root tbf rate 30Mbit latency 50ms burst 10000
+sudo tc qdisc del dev docker_game root tbf rate 50Mbit latency 50ms burst 10000
 ```

@@ -63,6 +63,7 @@
         --> design -- 设计
 #### Basic threading -- 基本线程
 --> basic -- 基本
+
 --> threading -- 线程
 
     1. Defining tasks -- 明确任务
@@ -89,6 +90,7 @@
         --> exception -- 列外(就是程序出现预先所知错误)
 #### sharing resources -- 共享资源
 --> sharing(share) -- 分享，共享
+
 --> resources -- 资源
 
     1. Improperly accessing resources -- 不正常的资源访问
@@ -105,9 +107,32 @@
     5. Critical sections -- 严重的部分
         --> critical -- 危急，临界，严重
         --> sections -- 部分，章节，剖面
-    6. Synchronizing on other objects -- 
+    6. Synchronizing on other objects -- 在其他对象上同步(跨对象同步)
         --> synchronizing -- 同步
-        --> 
+    7. Thread local storage -- 本地线程存储
+        --> storage -- 存储，保管
+
+#### Terminationg tasks -- 终止任务
+--> Terminationg -- 终止，满期
+
+    1. The ornamental garden -- 被装饰的花园？
+        --> ornamental -- 装饰
+        --> garden -- 花园，果园
+    2. Terminationg when blocked -- 受助时终止
+        --> blocked -- 受助
+    3. Interruption -- 中断
+    4. Checking for an interrupt -- 中断检查
+
+#### Cooperation between tasks -- 任务之间的协作
+--> cooperation -- 合作，协作
+
+    1. wait() and notifyALl() -- 等待方法和全部通知方法
+        --> notify -- 通知，告知
+    2. notify() vs. notifyAll() -- notify()和notifyAll()的比较
+    3. Producers and consumers -- 生产者和消费者
+        --> producers -- 生产商，制作者
+        --> consumers -- 消费者
+    4. producer-consumers and queues -- 生产者-消费者和队列(队列对于)
 
 
 
