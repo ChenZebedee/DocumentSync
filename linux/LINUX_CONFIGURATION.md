@@ -91,9 +91,9 @@ sed "/^\s*\<KEY\>\|\<INDEX\>/d" test.sql
 
 ## docker 路由映射
 ```shell
-iptables -t nat -A POSTROUTING -s 192.168.5.60/32 -d 192.168.5.60/32 -p tcp -m tcp --dport 19888 -j MASQUERADE
-iptables -t nat -A DOCKER ! -i br-hadoop -p tcp -m tcp --dport 19888 -j DNAT --to-destination 192.168.5.60:19888
-iptables -A DOCKER -d 192.168.5.60/32 ! -i br-hadoop -o br-hadoop -p tcp -m tcp --dport 19888 -j ACCEPT
+iptables -t nat -A POSTROUTING -s 192.168.5.62/32 -d 192.168.5.62/32 -p tcp -m tcp --dport 10023 -j MASQUERADE
+iptables -t nat -A DOCKER ! -i br-hadoop -p tcp -m tcp --dport 10023 -j DNAT --to-destination 192.168.5.62:22
+iptables -A DOCKER -d 192.168.5.62/32 ! -i br-hadoop -o br-hadoop -p tcp -m tcp --dport 22 -j ACCEPT
 ```
 
 ## 开启外部入口
