@@ -36,3 +36,18 @@ mysql -u -p'' -Ne"show index from ${DATABASE}.${TABLE}\g" | awk 'BEGIN{OFS=","}{
 ```sql
 mysql_config_editor set --login-path=client --host=localhost --user=admin --password
 ```
+
+## 添加主键到第一列
+```sql
+alter table {} add column id int(10) not null  primary key auto_increment FIRST;
+```
+
+## 删除主键
+```sql
+Alter table {} change id id int(10);Alter table {} drop primary key;Alter table {} drop column id;
+```
+
+## 清空表并设置自增ID从1开始
+```sql
+truncate table {};alter table {} AUTO_INCREMENT=1;
+```
