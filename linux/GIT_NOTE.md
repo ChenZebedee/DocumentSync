@@ -61,3 +61,8 @@ git pull origin master
 ```bash
 git checkout -- $[FILE]
 ```
+
+## GIT 删除文件夹
+```bash
+git rm -r --cached .idea 
+```
