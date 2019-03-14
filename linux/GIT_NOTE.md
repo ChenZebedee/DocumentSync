@@ -66,3 +66,21 @@ git checkout -- $[FILE]
 ```bash
 git rm -r --cached .idea 
 ```
+
+## 远程分支
+```bash
+#新建
+git branch HiveUtils
+#切换
+git checkout HiveUtils
+#提交
+git push origin HiveUtils:HiveUtils
+```
+
+## 本地恢复制定版本提交之后
+```bash
+#查看历史版本
+git log
+#指定版本
+git reset --hard 
+```
