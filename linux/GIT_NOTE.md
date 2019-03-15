@@ -84,3 +84,9 @@ git log
 #指定版本
 git reset --hard 
 ```
+
+
+## 强行提交新版本至远程
+```bash
+git push -u origin master -f 
+```
