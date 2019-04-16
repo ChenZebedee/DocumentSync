@@ -43,10 +43,10 @@ firewall-cmd --reload
 ```
 ## port -- show
 ```sh
-firewall-cmd --zone= public --query-port=80/tcp
+firewall-cmd --zone=public --query-port=80/tcp
 ```
 
 ## port -- delete
 ```sh
-firewall-cmd --zone= public --remove-port=80/tcp --permanent
+firewall-cmd --zone=public --remove-port=80/tcp --permanent
 ```
