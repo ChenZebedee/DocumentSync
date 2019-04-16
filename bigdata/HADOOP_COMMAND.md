@@ -147,3 +147,12 @@ hadoop fs -copyFromLocal tez-0.8.5.tar.gz /apps/
 
 ## hive beeline 添加队列
 在 beeline 连接的地址后面添加 `?mapreduce.job.queuename=hadoop`
+
+
+## mapreduce 运行参数
+```shell
+-D mapreduce.map.cpu.vcores=2
+-D mapreduce.reduce.cpu.vcores=2
+-D mapreduce.map.memory.mb=2048
+-D mapreduce.reduce.memory.mb=2048
+```
