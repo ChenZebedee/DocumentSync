@@ -4,6 +4,8 @@
 
 ```sql
 CREATE USER 'username'@'%' IDENTIFIED WITH mysql_native_password BY 'youpassword';
+
+caching_sha2_password 
 ```
 
 ## 密码修改
