@@ -60,3 +60,10 @@ sudo tc qdisc add dev docker_game root tbf rate 90Mbit latency 50ms burst 10000
 #删除
 sudo tc qdisc del dev docker_game root tbf rate 90Mbit latency 50ms burst 10000
 ```
+
+## agett 占用 100%
+解决方法:在宿主机和容器内使用
+```shell
+systemctl stop getty@tty1.service
+systemctl mask getty@tty1.service
+```
