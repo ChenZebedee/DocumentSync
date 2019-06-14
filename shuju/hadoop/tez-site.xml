@@ -1,0 +1,10 @@
+<configuration>
+  <property>
+    <name>tez.lib.uris</name>
+    <value>${fs.defaultFS}/app/tez/tez-0.8.5.tar.gz</value>
+ </property>
+ <property>
+   <name>tez.am.task.max.failed.attempts</name>
+   <value>10</value>
+ </property>
+</configuration>

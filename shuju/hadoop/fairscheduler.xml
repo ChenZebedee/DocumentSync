@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<allocations>
+  <!--<queue name="default">
+    <minResources>10000 mb,4 vcores</minResources>
+    <maxResources>20000 mb,16 vcores</maxResources>
+    <maxRunningApps>10</maxRunningApps>
+    <maxAMShare>0.1</maxAMShare>
+    <weight>2.0</weight>
+    <schedulingPolicy>fair</schedulingPolicy>
+  </queue>
+  <queue name="hive">
+    <minResources>5000 mb,4 vcores</minResources>
+    <maxResources>20000 mb,16 vcores</maxResources>
+    <maxRunningApps>20</maxRunningApps>
+    <weight>2.0</weight>
+    <schedulingPolicy>fair</schedulingPolicy>
+  </queue>
+  <queue name="spark">
+    <minResources>2000 mb,4 vcores</minResources>
+    <maxResources>50000 mb,16 vcores</maxResources>
+    <maxRunningApps>30</maxRunningApps>
+    <weight>2.0</weight>
+    <schedulingPolicy>fair</schedulingPolicy>
+  </queue>
+  <queue name="hadoop">
+    <minResources>5000 mb,4 vcores</minResources>
+    <maxResources>10000 mb,10 vcores</maxResources>
+    <maxRunningApps>50</maxRunningApps>
+  </queue>
+  <user name="hadoop">
+    <minResources>2000 mb,4 vcores</minResources>
+    <maxResources>100000 mb,16 vcores</maxResources>
+    <maxRunningApps>50</maxRunningApps>
+  </user>
+  <userMaxAppsDefault>10</userMaxAppsDefault>-->
+</allocations>
