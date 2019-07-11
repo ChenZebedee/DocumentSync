@@ -17,7 +17,7 @@ kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --par
 
 ## Topic 列表
 ```sh
-bin/kafka-topics.sh --list --zookeeper localhost:2181
+kafka-topics.sh --list --zookeeper localhost:2181
 ```
 
 ## 生产者
@@ -43,3 +43,22 @@ zkCli.sh -server ...
 ```
 
 
+## 修改 offset
+### 查看最小offset
+```bash
+ kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 192.168.1.84:9092 -topic country_canal_test --time -2
+```
+### 查看最大 offset
+```bash
+kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 192.168.1.84:9092 -topic country_canal_test --time -1
+```
+### 重置流程
+```
+./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group countryGET --describe
+./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group countryGET --topic country_canal_out_imp --reset-offsets --to-earliest
+./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group countryGET --topic country_canal_out_amp --reset-offsets --to-earliest
+./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group countryGET --topic country_canal_out_imp --reset-offsets --to-earliest --execute
+./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group countryGET --topic country_canal_out_amp --reset-offsets --to-earliest --execute
+./kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group countryGET --describe
+
+```
