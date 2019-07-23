@@ -1,3 +1,14 @@
+<!-- TOC -->
+
+- [hadoop基本组成与原理](#hadoop基本组成与原理)
+    - [Hdfs:分布式文件存储系统 放数据的地方](#hdfs分布式文件存储系统-放数据的地方)
+    - [MapReduce：分布式并行计算框架 -- 处理数据的一个过程  主要目的也是处理数据](#mapreduce分布式并行计算框架----处理数据的一个过程--主要目的也是处理数据)
+            - [当环形缓冲区的kvbuffer和kvmeta相遇了怎么办？](#当环形缓冲区的kvbuffer和kvmeta相遇了怎么办)
+        - [内存缓冲区设置：mapred.job.shuffle.input.buffer.percent](#内存缓冲区设置mapredjobshuffleinputbufferpercent)
+        - [内存到磁盘的设置：mapred.job.shuffle.merge.percent](#内存到磁盘的设置mapredjobshufflemergepercent)
+    - [Yarn：资源管理 任务调度平台 将mr1中的JobTracker进行了拆分--全局组件：Resourcemanager、应用组件：applicationMaster和日志管理：JobHistoryServer](#yarn资源管理-任务调度平台-将mr1中的jobtracker进行了拆分--全局组件resourcemanager应用组件applicationmaster和日志管理jobhistoryserver)
+
+<!-- /TOC -->
 # hadoop基本组成与原理
 ## Hdfs:分布式文件存储系统 放数据的地方
 组成：
