@@ -1,12 +1,20 @@
 <!-- TOC -->
 
-- [hadoop基本组成与原理](#hadoop基本组成与原理)
-    - [Hdfs:分布式文件存储系统 放数据的地方](#hdfs分布式文件存储系统-放数据的地方)
-    - [MapReduce：分布式并行计算框架 -- 处理数据的一个过程  主要目的也是处理数据](#mapreduce分布式并行计算框架----处理数据的一个过程--主要目的也是处理数据)
-            - [当环形缓冲区的kvbuffer和kvmeta相遇了怎么办？](#当环形缓冲区的kvbuffer和kvmeta相遇了怎么办)
-        - [内存缓冲区设置：mapred.job.shuffle.input.buffer.percent](#内存缓冲区设置mapredjobshuffleinputbufferpercent)
-        - [内存到磁盘的设置：mapred.job.shuffle.merge.percent](#内存到磁盘的设置mapredjobshufflemergepercent)
-    - [Yarn：资源管理 任务调度平台 将mr1中的JobTracker进行了拆分--全局组件：Resourcemanager、应用组件：applicationMaster和日志管理：JobHistoryServer](#yarn资源管理-任务调度平台-将mr1中的jobtracker进行了拆分--全局组件resourcemanager应用组件applicationmaster和日志管理jobhistoryserver)
+- [hadoop基本组成与原理](#hadoop%e5%9f%ba%e6%9c%ac%e7%bb%84%e6%88%90%e4%b8%8e%e5%8e%9f%e7%90%86)
+  - [Hdfs:分布式文件存储系统 放数据的地方](#hdfs%e5%88%86%e5%b8%83%e5%bc%8f%e6%96%87%e4%bb%b6%e5%ad%98%e5%82%a8%e7%b3%bb%e7%bb%9f-%e6%94%be%e6%95%b0%e6%8d%ae%e7%9a%84%e5%9c%b0%e6%96%b9)
+  - [NameNode 工作机制](#namenode-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6)
+  - [secondryNameNode 工作机制](#secondrynamenode-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6)
+  - [HDFS 读写工作过程：](#hdfs-%e8%af%bb%e5%86%99%e5%b7%a5%e4%bd%9c%e8%bf%87%e7%a8%8b)
+  - [DataNode 工作机制](#datanode-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6)
+  - [MapReduce 工作流程](#mapreduce-%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b)
+  - [shuffle 机制](#shuffle-%e6%9c%ba%e5%88%b6)
+  - [MapTask 机制](#maptask-%e6%9c%ba%e5%88%b6)
+  - [ReduceTask 机制](#reducetask-%e6%9c%ba%e5%88%b6)
+  - [MapReduce：分布式并行计算框架 -- 处理数据的一个过程 主要目的也是处理数据](#mapreduce%e5%88%86%e5%b8%83%e5%bc%8f%e5%b9%b6%e8%a1%8c%e8%ae%a1%e7%ae%97%e6%a1%86%e6%9e%b6----%e5%a4%84%e7%90%86%e6%95%b0%e6%8d%ae%e7%9a%84%e4%b8%80%e4%b8%aa%e8%bf%87%e7%a8%8b-%e4%b8%bb%e8%a6%81%e7%9b%ae%e7%9a%84%e4%b9%9f%e6%98%af%e5%a4%84%e7%90%86%e6%95%b0%e6%8d%ae)
+      - [当环形缓冲区的kvbuffer和kvmeta相遇了怎么办？](#%e5%bd%93%e7%8e%af%e5%bd%a2%e7%bc%93%e5%86%b2%e5%8c%ba%e7%9a%84kvbuffer%e5%92%8ckvmeta%e7%9b%b8%e9%81%87%e4%ba%86%e6%80%8e%e4%b9%88%e5%8a%9e)
+    - [内存缓冲区设置：mapred.job.shuffle.input.buffer.percent](#%e5%86%85%e5%ad%98%e7%bc%93%e5%86%b2%e5%8c%ba%e8%ae%be%e7%bd%aemapredjobshuffleinputbufferpercent)
+    - [内存到磁盘的设置：mapred.job.shuffle.merge.percent](#%e5%86%85%e5%ad%98%e5%88%b0%e7%a3%81%e7%9b%98%e7%9a%84%e8%ae%be%e7%bd%aemapredjobshufflemergepercent)
+  - [Yarn：资源管理 任务调度平台 将mr1中的JobTracker进行了拆分--全局组件：Resourcemanager、应用组件：applicationMaster和日志管理：JobHistoryServer](#yarn%e8%b5%84%e6%ba%90%e7%ae%a1%e7%90%86-%e4%bb%bb%e5%8a%a1%e8%b0%83%e5%ba%a6%e5%b9%b3%e5%8f%b0-%e5%b0%86mr1%e4%b8%ad%e7%9a%84jobtracker%e8%bf%9b%e8%a1%8c%e4%ba%86%e6%8b%86%e5%88%86--%e5%85%a8%e5%b1%80%e7%bb%84%e4%bb%b6resourcemanager%e5%ba%94%e7%94%a8%e7%bb%84%e4%bb%b6applicationmaster%e5%92%8c%e6%97%a5%e5%bf%97%e7%ae%a1%e7%90%86jobhistoryserver)
 
 <!-- /TOC -->
 # hadoop基本组成与原理
@@ -16,11 +24,37 @@
 2. datanode - 多个运行节点，数据存储的地方，可直接对数据进行处理
 3. SecondryNameNode - 协助namenode合并元数据
 
+## NameNode 工作机制
+1. 用户上传数据的操作保存内存缓存中，同时往edits.log文件写入
+2. edits.log文件是一个临时的日志文件，且随着edits.log文件达到一定大小之后会将数据写入到另一个edits.log2文件，因此会产生多个edits.log小文件
+3. 多个edits.log小文件通过SecondaryNameNode（以下简称SN）节点最终保存在本地的fsimage文件中的
+4. NN每隔一段时间向SN发送checkpoint请求（fsimage和edits.log的合并）
+5. SN从NN上下载fsimage和edits.log文件，然后请求edits.log文件更改文件名为edits.new
+6. SN将fsimage和edits.log在内存合并运算、整合，生成新的fsimage.checkpoint，通知NN
+7. NN接到通知后从SN下载fsimage.checkpoint
+8. NN将fsimage.checkpoint和edits.new文件改回原来的名字
+
+## secondryNameNode 工作机制
 解决的问题：当namenode宕机时，如果没有SNN就会丢失这次启动的时候所有对文件系统的操作，namenode启动时会获取这个文件系统的快照（fsimage），然后所有操作都会写到操作序列文件中（edits）。宕机后edits中记录的操作没有写到fsimage中，就会使元数据丢失，所以需要一个东西来进行定期或定量的快照处理，这样下次宕机后，启动还是能得到相对新的快照。
     
-工作过程：
+## HDFS 读写工作过程：
 1. 读 client --> read --> namenode(元数据) --> datanode(数据文件) --> client读取数据，完事通知namenode关闭通道 --> read结束
 2. 写 clinet --> write --> namenode(元数据) -心跳机制（目的：报告 block块情况）-> datanode(写入数据文件) --> client写完数据，通知namenode，持久化元数据，关闭流 --> wirte结束
+
+## DataNode 工作机制
+DN采用pipeline（管道）机制对数据进行副本的复制，客户端从提交到DN时只有一个副本，DN根据NN传来的各个主机形成一个管道，一旦有数据往DN的第一个节点传输数据时，DN就会往管道内的其他DN节点异步通过网络复制数据，只有当所有节点拷贝完成，这个管道才算成功，否则DN会向NN通知复制副本失败，NN接收到DN失败请求，会根据拷贝好的成功的节点和失败的节点做一个调整，重新形成新的管道（例如：有3个节点在传输，假如3个节点传输失败，这个管道就失败了，NN在重新选择的时候会将传输成功的第2个节点与其他非原来第3个节点的节点再次形成管理进行副本的复制）
+
+![DataNode工作机制图](https://img-blog.csdn.net/20171114123754784?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY0NDI1NTM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+## MapReduce 工作流程
+输入切片(input split) -> Map 阶段 -> conbiner 阶段 -> shuffle 阶段 -> Reduce 阶段 -> 输出到 HDFS
+
+
+## shuffle 机制
+
+## MapTask 机制
+
+## ReduceTask 机制
 
 ## MapReduce：分布式并行计算框架 -- 处理数据的一个过程  主要目的也是处理数据
 
