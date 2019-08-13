@@ -164,8 +164,173 @@ set hive.optimize.skewinfo=table_B:(seller_id)[("0")("1")];
 set hive.optimize.skewjoin=true;
 ```
 
-### 方案三：倍数 B 表再取模 join
-建立一个中间表 number 表，只有一列 int 行，从 1-10(根据倾斜度而定)，然后 B 表放大 10 倍，再取模 join，sql如下
+#### 方案三：倍数 B 表再取模 join
+##### 通用方案：
+建立一个中间表 numbers 表，只有一列 int 行，从 1-10(根据倾斜度而定)，然后 B 表放大 10 倍，再取模 join，sql如下
 ```sql
+select
+    m.buyer_id,
+    sum(m.pay_cnt_90d),
+    sum(case when m.s_level=0, then m.pay_cnt_90d end) as pay_cnt_90d_s0,
+    sum(case when m.s_level=1, then m.pay_cnt_90d end) as pay_cnt_90d_s1,
+    sum(case when m.s_level=2, then m.pay_cnt_90d end) as pay_cnt_90d_s2,
+    sum(case when m.s_level=3, then m.pay_cnt_90d end) as pay_cnt_90d_s3,
+    sum(case when m.s_level=4, then m.pay_cnt_90d end) as pay_cnt_90d_s4,
+    sum(case when m.s_level=5, then m.pay_cnt_90d end) as pay_cnt_90d_s5
+from
+(
+    select a.buyer_id,a.seller_id,a.pay_cnt_90d,b.s_level
+    from
+    (
+        select 
+            buyer_id,seller_id,pay_cnt_90d
+        from table_A
+    ) a
+    join
+    (
+        select /*mapjoin(numbers)*/
+            b1.seller_id,b1.s_level,b2.number
+        from table_B b1
+        join numbers b2 
+    ) b -- 每条 table_B 的数据都会变成 10 条
+    on a.seller_id = b.seller_id
+    and mod(a.pay_cnt_90d,10)+1=b.number -- 因为 numbers 是 1-10 所以对 pay_cnt_90d 进行取模后要 +1
+) m
+group by m.buyer_id
+```
+个人理解：
+>当 B 表扩大10倍之后，那么B表可以在添加一个进入 reduce 分区的判断条件，这样扩大 10 倍之后，再拿 A 表的 pay_cnt_90d 的值取模 join 那就可以进行随机散列操作不会一个人一直在一个 reduce 中，一个人可以在多个 reduce 中
+
+##### 专用方案:
+只需要把大卖家扩大就行，小卖家不用放大倍数
+
+1. 先把大卖家找出来，然后生成大卖家临时表(dim_big_seller),同时预先设定要扩大的倍数 1000 倍
+2. 在 A 表和 B 表都新建一个 join 列，逻辑为：如果是大卖家，那么 concat 一个随机分配整数(0到预定义的倍数之间)，如果不是，则保持不变
+
+sql逻辑如下
+```sql
+select
+    m.buyer_id,
+    sum(m.pay_cnt_90d),
+    sum(case when m.s_level=0, then m.pay_cnt_90d end) as pay_cnt_90d_s0,
+    sum(case when m.s_level=1, then m.pay_cnt_90d end) as pay_cnt_90d_s1,
+    sum(case when m.s_level=2, then m.pay_cnt_90d end) as pay_cnt_90d_s2,
+    sum(case when m.s_level=3, then m.pay_cnt_90d end) as pay_cnt_90d_s3,
+    sum(case when m.s_level=4, then m.pay_cnt_90d end) as pay_cnt_90d_s4,
+    sum(case when m.s_level=5, then m.pay_cnt_90d end) as pay_cnt_90d_s5
+from
+(
+    select a.buyer_id,a.seller_id,a.pay_cnt_90d,b.s_level
+    from
+    (
+        select /*mapjoin(big)*/
+            buyer_id,seller_id,pay_cnt_90d,
+            if(big.seller_id is not null,concat(table_A.seller_id,'rnd',cast(rand()*1000) as bigint),table_A.seller_id) as seller_id_joinkey
+        from table_A
+        left outer join 
+        -- big 表的 seller_id 有重复，所以一定要先 group by 之后再 join，以保证 table_A 的行数不变
+        (select seller_id from dim_big_seller group by seller_id) big
+        table_A.seller_id=big.seller_id
+    ) a
+    join
+    (
+        select /*mapjoin(big)*/
+            seller_id,s_level,
+            coalesce(seller_id_joinkey,table_B.seller_id) as seller_id_joinkey
+        from table_B
+        left outer join
+        (select seller_id,seller_id_jionkey from dim_big_seller) big 
+        on table_B.seller_id=big.seller_id
+    ) b
+    on a.seller_id_joinkey = b.seller_id_joinkey
+) m
+group by m.buyer_id
+```
+
+其实就是生成一个 big 的中间表，大表的seller_id变成随机数，0-1000以内，再通过两个表各自关联，取出这个随机生成的id，然后再通过这个id进行join
+
+
+#### 方案4：动态一分为二
+把倾斜的和不倾斜的分开处理，如果是倾斜的就找出来，进行 mapjoin ，最后通过 union all 结果
+
+缺点：代码复杂，且需要一个临时表来存储倾斜的键值对
+
+伪代码：
+```sql
+-- 先找出 90 天买家数超过 10000 的卖家
+insert overwrite table tmp_table_B
+select 
+    m.seller_id,
+    n.s_level
+from 
+(
+    select
+        seller_id
+    from
+    (
+        select
+            seller_id,
+            count(buyer_id) as byr_cnt
+        from table_A
+        group by seller_id
+    ) a
+    where a.byr_cnt > 10000   
+) m
+left outer join
+(
+    select 
+        user_id,
+        s_level,
+    from table_B
+) n
+on m.seller_id=n.user_id
+
+-- 对于 90 天超过 10000 的卖家进行 mapjoin，其他卖家正常 join
+select
+    m.buyer_id,
+    sum(m.pay_cnt_90d),
+    sum(case when m.s_level=0, then m.pay_cnt_90d end) as pay_cnt_90d_s0,
+    sum(case when m.s_level=1, then m.pay_cnt_90d end) as pay_cnt_90d_s1,
+    sum(case when m.s_level=2, then m.pay_cnt_90d end) as pay_cnt_90d_s2,
+    sum(case when m.s_level=3, then m.pay_cnt_90d end) as pay_cnt_90d_s3,
+    sum(case when m.s_level=4, then m.pay_cnt_90d end) as pay_cnt_90d_s4,
+    sum(case when m.s_level=5, then m.pay_cnt_90d end) as pay_cnt_90d_s5
+from
+(
+    select a.buyer_id,a.seller_id,a.pay_cnt_90d,b.s_level
+    from
+    (
+        select 
+            buyer_id,seller_id,pay_cnt_90d
+        from table_A
+    ) a
+    join
+    (
+        select
+            seller_id,s_level
+        from table_A a
+        left outer join tmp_table_B b
+        on a.seller_id=b.seller_id
+        where b.seller_id is null
+    ) b
+    on a.seller_id = b.seller_id
+    union all
+    select /*mapjoin(b)*/
+        a.buyer_id,a.seller_id,a.pay_cnt_90d,b.s_level
+    from
+    (
+        select 
+            buyer_id,seller_id,pay_cnt_90d
+        from table_A
+    ) a
+    join
+    (
+        select
+            seller_id,s_level
+        from tmp_table_B
+    ) b
+    on a.seller_id = b.seller_id
+) m
+group by m.buyer_id
 
 ```
