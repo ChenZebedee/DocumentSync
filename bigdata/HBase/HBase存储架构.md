@@ -1,3 +1,17 @@
+<!-- TOC -->
+
+- [HBase存储架构](#hbase%e5%ad%98%e5%82%a8%e6%9e%b6%e6%9e%84)
+  - [Client](#client)
+  - [Zookeeper](#zookeeper)
+  - [HMaster](#hmaster)
+  - [HRegionServer](#hregionserver)
+  - [HRegion](#hregion)
+    - [HRegion定位：](#hregion%e5%ae%9a%e4%bd%8d)
+  - [Store](#store)
+  - [StoreFile](#storefile)
+  - [HFile](#hfile)
+
+<!-- /TOC -->
 # HBase存储架构
 HBase 系统架构由 Client、Zookeeper、HMaster、HRegionServer、HRegion、HStore、HLog、HDFS 等部件组成。
 
