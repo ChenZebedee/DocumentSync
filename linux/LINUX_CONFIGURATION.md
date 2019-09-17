@@ -100,3 +100,17 @@ iptables -A DOCKER -d 192.168.5.62/32 ! -i br-hadoop -o br-hadoop -p tcp -m tcp 
 ```
 iptables -I INPUT -p tcp –dport 8080 -j ACCEPT
 ```
+
+## 修改ulimt 6.5
+1. 修改 `/etc/security/limits.conf` 文件，修改成如下内容
+```
+* hard nproc 64000
+* soft nproc 64000
+* hard nofile 64000
+* soft nofile 64000
+```
+2. 修改 `/etc/security/limits.d/90-nproc.conf`，修改成如下内容
+```
+*          soft    nproc     unlimited
+root       soft    nproc     unlimited
+```
