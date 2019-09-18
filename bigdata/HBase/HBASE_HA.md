@@ -13,6 +13,7 @@
         - [log4j.properties](#log4jproperties)
         - [regionservers](#regionservers)
         - [backup-masters](#backup-masters)
+    - [启动步骤](#启动步骤)
 
 <!-- /TOC -->
 
@@ -57,12 +58,89 @@ EOF
 目录 `${HBASE_HOME}/conf`
 
 ### hbase-env.sh
+1. 修改 `export JAVA_HOME`，配置成自己的 jdk 路径
+2. 添加 `export HBASE_PID_DIR=` 配置成一个稳定目录，并且Hadoop有权限，不然放在 tmp 下定期会被删除
+3. 添加 `export HBASE_CLASSPATH` 添加 Hadoop 的配置目录
+4. 添加 `export HBASE_LOG_DIR` 配置日志存储位置
+5. 添加 `export HBASE_MANAGES_ZK` 不启动自带 ZK，需要启动开源的 zookeeper
 
+配置案例:
+```shell
+export JAVA_HOME=/usr/local/jdk1.8.0_181
+export HBASE_PID_DIR=/opt/bigdata/hbase/tmp/pid
+export HBASE_CLASSPATH=/opt/bigdata/hadoop/etc/hadoop
+export HBASE_LOG_DIR=${HBASE_HOME}/logs
+export HBASE_MANAGES_ZK=false
+```
 
 ### hbase-site.xml
 
-### log4j.properties
+配置案例:
+```xml
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <name>hbase.rootdir</name> <!--配置HBase元数据存储目录-->
+    <value>hdfs://ewell/hbase</value>
+  </property>
+<property>
+  <name>hbase.zookeeper.quorum</name> <!--配置ZOOKEEPER 地址-->
+  <value>hadoop01,hadoop02,hadoop03</value>
+</property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name> <!--配置 zk数据存放地址-->
+    <value>/opt/bigdata/hbase/data</value>
+  </property>
+  <property>
+    <name>hbase.unsafe.stream.capability.enforce</name> <!--是否开启流功能-->
+    <value>false</value>
+  </property>
 
+<property>
+<name>hbase.cluster.distributed</name> <!--是否保持集群运行-->
+<value>true</value>
+</property>
+
+<property>
+<name>hbase.master</name><!--Master 配置有多个就写端口就好，就一个要写主机名:端口-->
+<value>60000</value>
+</property>
+
+<property>
+<name>hbase.tmp.dir</name> <!--临时文件目录配置-->
+<value>/opt/bigdata/hbase/tmp</value>
+</property>
+
+
+<property>
+<name>hbase.zookeeper.property.clientPort</name><!--zookeeper端口配置-->
+<value>2181</value>
+</property>
+
+<property>
+<name>zookeeper.session.timeout</name><!--zookeeper 连接等待时间-->
+<value>120000</value>
+</property>
+
+<property>
+<name>hbase.regionserver.restart.on.zk.expire</name> <!--是否在regionserver 到期是重新注册-->
+<value>true</value>
+</property>
+
+</configuration>
+```
+
+### log4j.properties
+1. 修改`hbase.log.dir` 配置为自己的目录
 ### regionservers
+1. 删除localhost
+2. 添加要启动regionserver的主机名
 
 ### backup-masters
+1. 在 conf 目录下创建文件 backup-masters 文件
+2. 添加要作为备份主机的主机名
+
+## 启动步骤
+1. 启动外部[ZOOKEEPER]()
+2. 在主Master 主机运行 start-hbase.sh命令
