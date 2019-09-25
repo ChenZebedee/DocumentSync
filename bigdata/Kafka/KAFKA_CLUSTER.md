@@ -1,4 +1,16 @@
 # KAFKA 集群搭建
+<!-- TOC -->
+
+- [KAFKA 集群搭建](#kafka-集群搭建)
+    - [下载 KAFKA 与 SCALA](#下载-kafka-与-scala)
+    - [scala 搭建](#scala-搭建)
+    - [kafka 搭建](#kafka-搭建)
+        - [以下用 root 用户操作](#以下用-root-用户操作)
+        - [以下用 hadoop 用户操作](#以下用-hadoop-用户操作)
+    - [kafka 配置](#kafka-配置)
+        - [server.properties 核心配置](#serverproperties-核心配置)
+
+<!-- /TOC -->
 ## 下载 KAFKA 与 SCALA
 [KAFKA 1.0.0 下载地址](https://archive.apache.org/dist/kafka/1.0.0/kafka_2.12-1.0.0.tgz)
 
