@@ -45,7 +45,7 @@
     ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';
     ```
 ## Hive 安装
-1. 配置 `/etc/profile`
+### 1. 配置 `/etc/profile`
     ```shell
     添加如下配置：
     #HIVE
@@ -53,7 +53,7 @@
     export HIVE_CONF_DIR=${HIVE_HOME}/conf
     export PATH=$PATH:$HIVE_HOME/bin
     ```
-2. 复制 `hive-default.xml.template` 为 `hive-site.xml`,并配置`hive-site.xml`
+### 2. 复制 `hive-default.xml.template` 为 `hive-site.xml`,并配置`hive-site.xml`
     ```xml
     <property>
         <name>hive.metastore.warehouse.dir</name>
@@ -91,4 +91,50 @@
     </property>
     ```
     再替换两个地方
-    >${system:java.io.tmpdir} 替换成 /opt/bigdata/hive
+    >`${system:java.io.tmpdir}` 替换成 `/opt/bigdata/hive`
+
+    >`${system:user.name}` 替换成 `hadoop`
+
+    ```
+    sed 's#\$\{system\:java\.io\.tmpdir\}#/opt/bigdata/hive#g'
+    sed 's#\$\{system\:user\.name\}#hadoop#g'
+    ```
+
+### 3. 复制 `hive-env.sh.template` 为 `hive-env.sh`
+
+添加如下配置
+
+```shell
+    export  HADOOP_HOME=/opt/hadoop/hadoop2.8
+    export  HIVE_CONF_DIR=/opt/hive/hive2.1/conf
+    export  HIVE_AUX_JARS_PATH=/opt/hive/hive2.1/lib
+```
+
+### 4.  启动hive
+1. 添加 MySQL 驱动 jar 包
+    >只要大版本一致就可以了 MySQL8.0 的一定要 8 的 jar 包
+2. 初始化 MySQL 数据库
+```shell
+    schematool -dbType <db type> -initSchema
+    schematool -dbType mysql -initSchema
+```
+3. 启动 hiveserver2
+
+    ```shell
+    hiveserver2
+    nohub /opt/bigdata/hive/bin/hiveserver2 1 > /opt/bigdata/hive/ 2>&1 &
+    ```
+
+4. 运行 beeline 测试
+
+    直接连接
+
+    ```shell
+    beeline -u jdbc:hive2://
+    ```
+
+    进入之后再连接
+    ```shell
+    shell> beeline
+    beeline> !connect jdbc:hive2//
+    ```
