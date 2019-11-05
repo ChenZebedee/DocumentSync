@@ -54,4 +54,3 @@
 参照之前文档: [Hadoop HA 配置](https://github.com/ChenZebedee/DocumentSync/blob/master/bigdata/Hadoop/HADOOP_HA.md)
 
 ## spark 配置
-

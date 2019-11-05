@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<allocations>
+  <queue name="other" type="parent">
+    <minResources>2048 mb,0vcores</minResources>
+    <maxResources>40% memory,400% cpu</maxResources>
+    <maxRunningApps>3</maxRunningApps>
+    <maxAMShare>0.5</maxAMShare>
+    <weight>2.0</weight>
+    <schedulingPolicy>fair</schedulingPolicy>
+    <queue name="fengkong">
+      <aclSubmitApps>*</aclSubmitApps>
+      <minResources>1024 mb,0vcores</minResources>
+    <weight>2.0</weight>
+    </queue>
+    <queue name="shujupingtai">
+      <reservation></reservation>
+        <weight>3.0</weight>
+    </queue>
+  </queue>
+
+  <!--<queueMaxAMShareDefault>0.5</queueMaxAMShareDefault>
+                <queueMaxResourcesDefault>50% memory,50% cpu</queueMaxResourcesDefault>-->
+
+  <!-- Queue 'hadoop' is a parent queue and may have
+                     user queues under it -->
+  <queue name="hadoop" >
+  <weight>5.0</weight>
+  <minResources>8192 mb,4 vcores</minResources>
+  <maxChildResources>20480 mb, 24 vcores</maxChildResources>
+  <maxRunningApps>2</maxRunningApps>
+  </queue>
+
+  <queuePlacementPolicy>
+    <rule name="specified" />
+    <rule name="primaryGroup" create="false" />
+    <rule name="nestedUserQueue">
+        <rule name="secondaryGroupExistingQueue" create="false" />
+    </rule>
+    <rule name="default" queue="other.shujupingtai"/>
+  </queuePlacementPolicy>
+</allocations>
+

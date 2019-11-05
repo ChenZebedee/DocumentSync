@@ -9,6 +9,7 @@
         - [以下用 hadoop 用户操作](#以下用-hadoop-用户操作)
     - [kafka 配置](#kafka-配置)
         - [server.properties 核心配置](#serverproperties-核心配置)
+    - [启动](#启动)
 
 <!-- /TOC -->
 ## 下载 KAFKA 与 SCALA
@@ -78,4 +79,10 @@ group.initial.rebalance.delay.ms=0
 group.min.session.timeout.ms=6000
 group.max.session.timeout.ms=1000000
 delete.topic.enable=true
+```
+
+## 启动
+每台机器都运行
+```shell
+kafka-server-start.sh -daemon /opt/bigdata/kafka/config/server.properties
 ```

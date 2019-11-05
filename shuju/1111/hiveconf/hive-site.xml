@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+
+<property>
+  <name>javax.jdo.option.ConnectionURL</name>
+  <value>jdbc:mysql://127.0.0.1:3306/hive?createDatabaseIfNotExist=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
+</property>
+
+<property>
+  <name>javax.jdo.option.ConnectionDriverName</name>
+  <value>com.mysql.jdbc.Driver</value>
+</property>
+<property>
+  <name>javax.jdo.option.ConnectionUserName</name>
+  <value>root</value>
+</property>
+
+<property>
+  <name>javax.jdo.option.ConnectionPassword</name>
+  <value>123456</value>
+</property>
+
+<property>
+  <name>hive.cli.print.header</name>
+  <value>true</value>
+</property>
+
+<property>
+  <name>hive.cli.print.current.db</name>
+  <value>true</value>
+</property>
+
+<property>
+<name>hive.hwi.listen.host</name>
+<value>0.0.0.0</value>
+</property>
+<property>
+<name>hive.hwi.listen.port</name>
+<value>9999</value>
+</property>
+<property>
+<name>hive.hwi.war.file</name>
+<value>lib/hive-hwi-1.1.0-cdh5.15.1.war</value>
+</property>
+
+<property>
+<name>hive.security.authorization.enabled</name>
+<value>true</value>
+</property>
+<property>
+<name>hive.security.authorization.createtable.owner.grants</name>
+<value>ALL</value>
+</property>
+<property>
+<name>hive.security.authorization.task.factory</name>
+<value>org.apache.hadoop.hive.ql.parse.authorization.HiveAuthorizationTaskFactoryImpl</value>
+</property>
+<property>
+<name>hive.users.in.admin.role</name>
+<value>hadoop,admin,oozie,root</value>
+</property>
+
+<!--<property>
+     <name>hive.server2.authentication</name>
+<value>NOSASL</value>
+</property>-->
+
+<property>
+    <name>hive.server2.thrift.bind.host</name>
+    <value>data5</value>
+</property>
+<property>
+    <name>hive.metastore.uris</name>
+    <value>thift://data5:9083</value>
+</property>
+<!--
+<property>
+  <name>hive.enable.spark.execution.engine</name>
+  <value>true</value>
+</property>
+-->
+<property>
+  <name>spark.home</name>
+  <value>/opt/bigdata/spark</value>
+</property>
+<property>
+  <name>spark.master</name>
+  <value>yarn-client</value>
+</property>
+<property>
+  <name>spark.enentLog.enabled</name>
+  <value>true</value>
+</property>
+<property>
+  <name>spark.enentLog.dir</name>
+  <value>hdfs://data3:9000/spark-log</value>
+</property>
+<property>
+  <name>spark.serializer</name>
+  <value>org.apache.spark.serializer.KryoSerializer</value>
+</property>
+<property>
+  <name>spark.executor.memeory</name>
+  <value>1g</value>
+</property>
+<property>
+  <name>spark.driver.memeory</name>
+  <value>3g</value>
+</property>
+<property>
+  <name>spark.executor.extraJavaOptions</name>
+  <value>-XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"</value>
+</property>
+</configuration>
