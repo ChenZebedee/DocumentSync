@@ -90,3 +90,11 @@ git reset --hard
 ```bash
 git push -u origin master -f 
 ```
+
+## 删除远程文件或者文件夹
+```bash
+git rm -r -n --cached 文件夹/文件
+git rm -r --cached 文件夹/文件
+git commit -m"删除xxxx"
+git push origin master
+```
