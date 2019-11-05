@@ -121,6 +121,7 @@
         "version":1
     }
     ```
+    >NOTE：把所有topic列出来，然后用正则每行头加上`{"topic":"`，每行尾加上`"},`，再删掉最后一个`,`，结束后，整个开始加上`{"topics":[`,整个尾再加上`],"version":1}`
 6. 生成重新分配topic的方案
     ```  
     kafka-reassign-partitions.sh --zookeeper hadoop01:2181 --topics-to-move-json-file topic-movie.json --broker-list "0,1,2" --generate
