@@ -23,14 +23,22 @@
 3. 新建 hadoop 用户，用于处理各个大数据组件
 4. 配置 `/etc/host` 文件，所有集群都配置，dns解析名字与服务器名字要一致
 5. 修改 ulimit 配置
-```
+```shell
 1. 修改 /etc/security/limits.conf 添加如下内容
 * soft nofile 65536
 * hard nofile 65536
 * soft nproc unlimited
 * hard nproc unlimited
 
-2. 修改 /etc/security/limits.d/90-nproc.conf 文件内容如下
+cat << EOF >> /etc/security/limits.conf
+* soft nofile 65536
+* hard nofile 65536
+* soft nproc unlimited
+* hard nproc unlimited
+EOF
+
+
+2. 修改 /etc/security/limits.d/20-nproc.conf (centos6 /etc/security/limits.d/90-nproc.conf) 文件内容如下
 *          soft    nproc     unlimited
 root       soft    nproc     unlimited
 ```
@@ -142,5 +150,5 @@ export HBASE_MANAGES_ZK=false
 2. 添加要作为备份主机的主机名
 
 ## 启动步骤
-1. 启动外部[ZOOKEEPER]()
-2. 在主Master 主机运行 start-hbase.sh命令
+1. 在每台机器上启动外部 ZOOKEEPER:`zkServer.sh start`
+2. 在主Master 主机运行 `start-hbase.sh`命令
