@@ -226,7 +226,7 @@ service firewalld stop
     ```sql
     create database ambari character set utf8;
     CREATE USER 'ambari'@'%' IDENTIFIED BY '123456';
-    GRANT ALL PRIVILEGES ON ambari.* TO 'ambari'@'%';
+    GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'%';
     FLUSH PRIVILEGES;
     create database hive character set utf8;
     CREATE USER 'hive'@'%' IDENTIFIED BY '123456';
@@ -362,8 +362,124 @@ ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connecto
     ```
 
 ## 安装ambari
+1. 删除一些目录
 ```
+rm -rf /etc/hadoop
+rm -rf /etc/hbase
+rm -rf /etc/oozie
+rm -rf /etc/zookeeper
+rm -rf /etc/tez
+rm -rf /etc/kafka
+rm -rf /etc/spark
+rm -rf /etc/ambari-metrics-monitor
+rm -rf /var/run/hadoop
+rm -rf /var/run/hbase
+rm -rf /var/run/zookeeper
+rm -rf /var/run/hadoop-yarn
+rm -rf /var/run/hadoop-mapreduce
+rm -rf /var/run/kafka
+rm -rf /var/run/spark
+rm -rf /var/run/ambari-metrics-monitor
+rm -rf /var/log/hadoop
+rm -rf /var/log/hbase
+rm -rf /var/log/zookeeper
+rm -rf /var/log/hadoop-hdfs
+rm -rf /var/log/hadoop-yarn
+rm -rf /var/log/hadoop-mapreduce
+rm -rf /var/log/kafka
+rm -rf /var/log/spark
+rm -rf /var/log/ambari-metrics-monitor
+rm -rf /usr/lib/flume
+rm -rf /usr/lib/storm
+rm -rf /var/lib/zookeeper
+rm -rf /var/lib/hadoop-hdfs
+rm -rf /var/lib/hadoop-yarn
+rm -rf /var/lib/hadoop-mapreduce
+rm -rf /hadoop/zookeeper
+rm -rf /hadoop/hdfs
+rm -rf /hadoop/yarn
+rm -rf /kafka-logs
+rm -rf /etc/hive
+rm -rf /etc/hive-hcatalog
+rm -rf /etc/hive-webhcat
+rm -rf /etc/slider
+rm -rf /etc/storm-slider-client
+rm -rf /etc/pig
+rm -rf /var/run/hive
+rm -rf /var/log/hive
+rm -rf /var/log/hive-hcatalog
+rm -rf /var/lib/hive
+rm -rf /var/lib/slider
+rm -rf /etc/ambari-metrics-collector
+rm -rf /var/run/webhcat
+rm -rf /var/run/ambari-metrics-collector
+rm -rf /var/log/ambari-metrics-collector
+rm -rf /usr/lib/ambari-metrics-collector
+rm -rf /var/lib/ambari-metrics-collector
+rm -rf /tmp/hadoop-hdfs
+rm -rf /var/log/webhcat
+rm -rf /tmp/hive
+rm -rf /tmp/hcat
+```
+2. 删除用户
+```sh
+userdel hadoop
+userdel hive
+userdel zookeeper
+userdel oozie
+userdel ams
+userdel tez
+userdel zeppelin
+userdel spark
+userdel ambari-qa
+userdel kafka
+userdel hdfs
+userdel sqoop
+userdel yarn
+userdel mapred
+userdel hbase
+userdel hcat
+userdel zookeeper
+userdel ams
+userdel hdfs
+```
+### 命令行安装Ambari-server
+```shell
+yum install ambari-server
+```
+### 初始化
+```sh
+ambari-server setup  --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+ambari-server setup
+```
+### 数据库创建 ambari 库
+```
+mysql -uambari -p ambari < /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
+```
+### 启动服务器
+```
+ambari-server start
+```
+### 访问界面配置
+基本就按步骤配，遇到问题看下面
 
-```
 
 #  遇到的问题
+## ssl问题
+```
+etUtil.py:96 - EOF occurred in violation of protocol (_ssl.c:579)
+NetUtil.py:97 - SSLError: Failed to connect. Please check openssl library versions.
+```
+编辑 `/etc/ambari-agent/conf/ambari-agent.ini` 文件，添加
+```INI
+[security]
+force_https_protocol=PROTOCOL_TLSv1_2
+```
+## 安装HDP时，HST Agent Instal安装失败(扩展，任何一个组件都这样操作)
+哪台主机错误，就把对应的软件删除了，然后在页面重装
+1. yum list | grep xxxx
+2. yum remove hadoop*
+3. retry
+
+## 服务器软连接错误
+zookeeper无法安装，服务器文件是在老的软链接
