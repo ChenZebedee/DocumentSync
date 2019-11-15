@@ -463,6 +463,16 @@ ambari-server start
 ### 访问界面配置
 基本就按步骤配，遇到问题看下面
 
+### 配置安装完后删除SmartSense
+由于这个服务是辅助hadoop的并且，没有id就启动不了，而id是官网发放的，所以就干脆删除了
+```sh
+curl -u admin:admin -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop SmartSense via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://data1:8080/api/v1/clusters/ewell/services/SMARTSENSE
+
+curl -u admin:admin -i -H 'X-Requested-By: ambari' -X POST -d '{"RequestInfo": {"context" :"Uninstall SmartSense via REST", "command":"Uninstall"}, "Requests/resource_filters":[{"hosts":"comma separated host names", "service_name":"SMARTSENSE", "component_name":"HST_AGENT"}]}' http://data1:8080/api/v1/clusters/ewell/requests
+
+curl -u admin:admin -H 'X-Requested-By: ambari' -X DELETE http://data1:8080/api/v1/clusters/ewell/services/SMARTSENSE
+```
+
 
 #  遇到的问题
 ## ssl问题
