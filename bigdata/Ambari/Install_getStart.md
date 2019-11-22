@@ -1,3 +1,57 @@
+<!-- TOC -->
+
+- [安装前准备](#安装前准备)
+    - [1. 安装JDK1.8](#1-安装jdk18)
+        - [卸载openjdk](#卸载openjdk)
+        - [下载](#下载)
+            - [tar包安装方式(.tar.gz)](#tar包安装方式targz)
+        - [rpm包安装方式(.rpm)](#rpm包安装方式rpm)
+    - [2. 系统要求](#2-系统要求)
+        - [2.1 系统软件要求](#21-系统软件要求)
+        - [2.2 内存要求](#22-内存要求)
+        - [2.3 包大小和节点数](#23-包大小和节点数)
+        - [2.4 最大打开文件数](#24-最大打开文件数)
+            - [查看命令](#查看命令)
+            - [配置教程](#配置教程)
+    - [3. 信息收集](#3-信息收集)
+    - [4. 安装之前准备工作](#4-安装之前准备工作)
+        - [4.1 免密登陆配置](#41-免密登陆配置)
+        - [4.2用户权限控制](#42用户权限控制)
+        - [4.3NTP配置(有点问题，之后再看)](#43ntp配置有点问题之后再看)
+        - [4.4 DNS 和 NSCD配置](#44-dns-和-nscd配置)
+            - [hosts file](#hosts-file)
+            - [hostname](#hostname)
+            - [网络配置](#网络配置)
+        - [4.5 防火墙配置](#45-防火墙配置)
+        - [4.6 selinux配置](#46-selinux配置)
+        - [4.7 数据库配置](#47-数据库配置)
+            - [MySQL配置](#mysql配置)
+            - [PostgreSQL配置(略)](#postgresql配置略)
+            - [Oracle 配置(略)](#oracle-配置略)
+        - [4.8 数据库安装](#48-数据库安装)
+            - [MySQL](#mysql)
+            - [PostgreSQL(略)](#postgresql略)
+            - [Oracle(略)](#oracle略)
+- [本地源安装](#本地源安装)
+    - [配置http服务](#配置http服务)
+    - [下载Ambari](#下载ambari)
+        - [centos7/readhat7 tar包](#centos7readhat7-tar包)
+        - [repo](#repo)
+    - [配置Ambari](#配置ambari)
+    - [安装ambari](#安装ambari)
+        - [命令行安装Ambari-server](#命令行安装ambari-server)
+        - [初始化](#初始化)
+        - [数据库创建 ambari 库](#数据库创建-ambari-库)
+        - [启动服务器](#启动服务器)
+        - [访问界面配置](#访问界面配置)
+        - [配置安装完后删除SmartSense](#配置安装完后删除smartsense)
+- [遇到的问题](#遇到的问题)
+    - [ssl问题](#ssl问题)
+    - [安装HDP时，HST Agent Instal安装失败(扩展，任何一个组件都这样操作)](#安装hdp时hst-agent-instal安装失败扩展任何一个组件都这样操作)
+    - [服务器软连接错误](#服务器软连接错误)
+    - [KAFKA 外网连接配置](#kafka-外网连接配置)
+
+<!-- /TOC -->
 # 安装前准备
 ## 1. 安装JDK1.8
 ------
@@ -452,6 +506,8 @@ yum install ambari-server
 ambari-server setup  --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 ambari-server setup
 ```
+- [ ] 添加 `setup` 安装步骤图
+
 ### 数据库创建 ambari 库
 ```
 mysql -uambari -p ambari < /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
@@ -462,6 +518,8 @@ ambari-server start
 ```
 ### 访问界面配置
 基本就按步骤配，遇到问题看下面
+- [ ] 添加界面操作截图
+
 
 ### 配置安装完后删除SmartSense
 由于这个服务是辅助hadoop的并且，没有id就启动不了，而id是官网发放的，所以就干脆删除了
@@ -493,3 +551,21 @@ force_https_protocol=PROTOCOL_TLSv1_2
 
 ## 服务器软连接错误
 zookeeper无法安装，服务器文件是在老的软链接
+
+
+## KAFKA 外网连接配置
+1. 在kafka配置界面，`Manage Config Groups` 新增3个组，并且每个分组添加对应服务器
+![管理配置组](https://s2.ax1x.com/2019/11/18/Myn81J.png)
+![管理界面](https://s2.ax1x.com/2019/11/18/MynI3Q.png)
+![新增三个分组](https://s2.ax1x.com/2019/11/18/Mynocj.png)
+![右边框框点加号](https://s2.ax1x.com/2019/11/18/MynbBq.png)
+![选择对应的服务器](https://s2.ax1x.com/2019/11/18/Mynj4U.png)
+![添加完成后的管理界面](https://s2.ax1x.com/2019/11/18/MyukE6.png)
+2. 配置服务器ip配置，每个组的每个 `listeners` 对应着各自的ip
+![点击保存后的界面，点击Listeners右边绿色加号](https://s2.ax1x.com/2019/11/18/MyuZCD.png)
+![选择服务器](https://s2.ax1x.com/2019/11/18/Myu3Uf.png)
+![配置对应的IP地址](https://s2.ax1x.com/2019/11/18/MyuY8g.png)
+![配置完成截图](https://s2.ax1x.com/2019/11/18/MyuaKs.png)
+3. 配置结束后，重启
+![重启kafka服务](https://s2.ax1x.com/2019/11/18/Myuwbq.png)
+![重启服务后](https://s2.ax1x.com/2019/11/18/MyuyPU.png)
