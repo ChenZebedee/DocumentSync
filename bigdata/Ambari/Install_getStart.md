@@ -39,8 +39,10 @@
         - [repo](#repo)
     - [配置Ambari](#配置ambari)
     - [安装ambari](#安装ambari)
+    - [正式安装](#正式安装)
         - [命令行安装Ambari-server](#命令行安装ambari-server)
         - [初始化](#初始化)
+        - [setup选择](#setup选择)
         - [数据库创建 ambari 库](#数据库创建-ambari-库)
         - [启动服务器](#启动服务器)
         - [访问界面配置](#访问界面配置)
@@ -50,6 +52,7 @@
     - [安装HDP时，HST Agent Instal安装失败(扩展，任何一个组件都这样操作)](#安装hdp时hst-agent-instal安装失败扩展任何一个组件都这样操作)
     - [服务器软连接错误](#服务器软连接错误)
     - [KAFKA 外网连接配置](#kafka-外网连接配置)
+    - [删除所有老包](#删除所有老包)
 
 <!-- /TOC -->
 # 安装前准备
@@ -187,7 +190,78 @@ root       soft    nproc     unlimited
 1. 安装 `yum install ntpdate ntp -y`
 2. 配置 `vim /etc/ntp.conf`
     ```properties
-
+    # For more information about this file, see the man pages
+    # ntp.conf(5), ntp_acc(5), ntp_auth(5), ntp_clock(5), ntp_misc(5), ntp_mon(5).
+    
+    driftfile /var/lib/ntp/drift
+    logfile /var/log/ntpd.log
+    
+    # Permit time synchronization with our time source, but do not
+    # permit the source to query or modify the service on this system.
+    restrict default nomodify notrap nopeer noquery
+    
+    # Permit all access over the loopback interface.  This could
+    # be tightened as well, but to do so would effect some of
+    # the administrative functions.
+    restrict 127.0.0.1
+    restrict ::1
+    restrict 192.168.198.0 mask 255.255.255.0 nomodify notrap
+    
+    # Hosts on local network are less restricted.
+    #restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap
+    
+    # Use public servers from the pool.ntp.org project.
+    # Please consider joining the pool (http://www.pool.ntp.org/join.html).
+    #server 0.centos.pool.ntp.org iburst
+    #server 1.centos.pool.ntp.org iburst
+    #server 2.centos.pool.ntp.org iburst
+    #server 3.centos.pool.ntp.org iburst
+    
+    server 0.cn.pool.ntp.org iburst
+    server 1.cn.pool.ntp.org iburst
+    server 2.cn.pool.ntp.org iburst
+    server 3.cn.pool.ntp.org iburst
+    
+    #新增:当外部时间不可用时，使用本地时间.
+    server 192.168.198.53 iburst
+    fudge 127.0.0.1 stratum 10
+    
+    #broadcast 192.168.1.255 autokey	# broadcast server
+    #broadcastclient			# broadcast client
+    #broadcast 224.0.1.1 autokey		# multicast server
+    #multicastclient 224.0.1.1		# multicast client
+    #manycastserver 239.255.254.254		# manycast server
+    #manycastclient 239.255.254.254 autokey # manycast client
+    restrict 0.cn.pool.ntp.org nomodify notrap noquery
+    restrict 1.cn.pool.ntp.org nomodify notrap noquery
+    restrict 2.cn.pool.ntp.org nomodify notrap noquery
+    
+    # Enable public key cryptography.
+    #crypto
+    
+    includefile /etc/ntp/crypto/pw
+    
+    # Key file containing the keys and key identifiers used when operating
+    # with symmetric key cryptography.
+    keys /etc/ntp/keys
+    
+    # Specify the key identifiers which are trusted.
+    #trustedkey 4 8 42
+    
+    # Specify the key identifier to use with the ntpdc utility.
+    #requestkey 8
+    
+    # Specify the key identifier to use with the ntpq utility.
+    #controlkey 8
+    
+    # Enable writing of statistics records.
+    #statistics clockstats cryptostats loopstats peerstats
+    
+    # Disable the monitoring facility to prevent amplification attacks using ntpdc
+    # monlist command when default restrict does not include the noquery flag. See
+    # CVE-2013-5211 for more details.
+    # Note: Monitoring will not be disabled with the limited restriction flag.
+    disable monitor
     ```
 
 
@@ -332,15 +406,22 @@ ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connecto
 ## 下载Ambari
 ### centos7/readhat7 tar包
 [Ambari 2.7.3](http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.3.0/ambari-2.7.3.0-centos7.tar.gz)
+[Ambari 2.7.4](http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.4.0/ambari-2.7.4.0-centos7.tar.gz)
 
 [HDP 3.1.0](http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.1.0.0/HDP-3.1.0.0-centos7-rpm.tar.gz)
-
 [HDP-UTILS 3.1.0](http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.22/repos/centos7/HDP-UTILS-1.1.0.22-centos7.tar.gz)
-
 [HDP-GPL 3.1.0](http://public-repo-1.hortonworks.com/HDP-GPL/centos7/3.x/updates/3.1.0.0/HDP-GPL-3.1.0.0-centos7-gpl.tar.gz)
 
-### repo
+[HDP-3.1.4](http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.1.4.0/HDP-3.1.4.0-centos7-rpm.tar.gz)
+[HDP-UTILS-1.1.0.22](http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.22/repos/centos7/HDP-UTILS-1.1.0.22-centos7.tar.gz)
+[HDP-GPL-3.1.4](http://public-repo-1.hortonworks.com/HDP-GPL/centos7/3.x/updates/3.1.4.0/HDP-GPL-3.1.4.0-centos7-gpl.tar.gz)
 
+
+
+### repo
+[Ambari 2.7.4](http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.4.0/ambari.repo)
+[hdp.gpl 3.1.4](http://public-repo-1.hortonworks.com/HDP-GPL/centos7/3.x/updates/3.1.4.0/hdp.gpl.repo)
+[HDP 3.14](http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.1.4.0/hdp.repo)
 
 
 ## 配置Ambari
@@ -348,73 +429,84 @@ ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connecto
     ```
     yum install -y httpd
     ```
-2. 会有目录 `/var/www/html` 创建目录 `/var/www/html/ambari`
+2. 会有目录 `/var/www/html` 并创建目录 
+   ```
+   mkdir -p /var/www/html/ambari/2.7.4
+   mkdir -p /var/www/html/hdp/3.1.4
+   ```
 3. 将之前下的包都解压到ambari目录下
     ```
-    tar zxf ambari-2.7.3.0-centos7.tar.gz -C /var/www/html/ambari
-    tar zxf HDP-3.1.0.0-centos7-rpm.tar.gz -C /var/www/html/ambari
-    tar zxf HDP-UTILS-1.1.0.22-centos7.tar.gz -C /var/www/html/ambari
-    tar zxf HDP-GPL-3.1.0.0-centos7-gpl.tar.gz -C /var/www/html/ambari
+    tar zxf ambari-2.7.4.0-centos7.tar.gz -C /var/www/html/ambari/2.7.4
+    tar zxf HDP-3.1.4.0-centos7-rpm.tar.gz -C /var/www/html/hdp/3.1.4
+    tar zxf HDP-UTILS-1.1.0.22-centos7.tar.gz -C /var/www/html/hdp/3.1.4
+    tar zxf HDP-GPL-3.1.4.0-centos7-gpl.tar.gz -C /var/www/html/hdp/3.1.4
     ```
 >访问网址没问题即可
 
-4. 获取repo配置文件 
+1. 获取repo配置文件 
     ```
-    wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.3.0/ambari.repo -p /etc/yum.repos.d
-    wget http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.1.0.0/hdp.repo -p /etc/yum.repos.d
-    wget http://public-repo-1.hortonworks.com/HDP-GPL/centos7/3.x/updates/3.1.0.0/hdp.gpl.repo -p /etc/yum.repos.d
+    wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.4.0/ambari.repo -P /etc/yum.repos.d
+    wget http://public-repo-1.hortonworks.com/HDP-GPL/centos7/3.x/updates/3.1.4.0/hdp.gpl.repo -P /etc/yum.repos.d
+    wget http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.1.4.0/hdp.repo -P /etc/yum.repos.d
     ```
-5. 配置repo文件
+2. 配置repo文件
     
     ambari.repo
     ```properties
-    #VERSION_NUMBER=2.7.3.0-139
-    [ambari-2.7.3.0]
-    name=ambari Version - ambari-2.7.3.0
-    baseurl=http://data1/ambari/centos7/2.7.3.0-139/
+    #VERSION_NUMBER=2.7.4.0-118
+    [ambari-2.7.4.0]
+    name=ambari Version - ambari-2.7.4.0
+    baseurl=http://data1/ambari/2.7.4/ambari/centos7/2.7.4.0-118/
     gpgcheck=1
-    gpgkey=http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.7.3.0-139/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://data1/ambari/2.7.4/ambari/centos7/2.7.4.0-118/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     ```
     
     hdp.repo
     ```properties
-    #VERSION_NUMBER=3.1.0.0-78
-    [HDP-3.1.0.0]
-    name=HDP Version - HDP-3.1.0.0
-    baseurl=http://data1/hdp/HDP/centos7/3.1.0.0-78/
+    #VERSION_NUMBER=3.1.4.0-315
+    [HDP-3.1.4.0]
+    name=HDP Version - HDP-3.1.4.0
+    baseurl=http://data1/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
     gpgcheck=1
-    gpgkey=http://data1/hdp/HDP/centos7/3.1.0.0-78/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://data1/hdp/3.1.4/HDP/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
-
-
+    
+    
     [HDP-UTILS-1.1.0.22]
     name=HDP-UTILS Version - HDP-UTILS-1.1.0.22
-    baseurl=http://data1/hdp/HDP-UTILS/centos7/1.1.0.22/
+    baseurl=http://data1/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
     gpgcheck=1
-    gpgkey=http://data1/hdp/HDP-UTILS/centos7/1.1.0.22/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://data1/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     ```
     hdp.gpl.repo
     ```properties
-    #VERSION_NUMBER=3.1.0.0-78
-    [HDP-GPL-3.1.0.0]
-    name=HDP-GPL Version - HDP-GPL-3.1.0.0
-    baseurl=http://data1/hdp/HDP-GPL/centos7/3.1.0.0-78/
+    #VERSION_NUMBER=3.1.4.0-315
+    [HDP-GPL-3.1.4.0]
+    name=HDP-GPL Version - HDP-GPL-3.1.4.0
+    baseurl=http://data1/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
     gpgcheck=1
-    gpgkey=http://data1/hdp/HDP-GPL/centos7/3.1.0.0-78/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://data1/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     ```
-6. 生成本地源
+3. 生成本地源
     ```centos
-    createrepo /var/www/html/hdp/HDP/centos7/
-    createrepo /var/www/html/hdp/HDP-UTILS/
+    createrepo /var/www/html/hdp/3.1.4/HDP/centos7/
+    createrepo /var/www/html/hdp/3.1.4/HDP-UTILS/
     ```
-
+4. 将 `ambari.repo hdp.repo hdp.gpl.repo` 三个文件复制到其他机器上
+    ```sh
+    for i in {/etc/yum.repos.d/ambari.repo,/etc/yum.repos.d/hdp.repo,/etc/yum.repos.d/hdp.gpl.repo};do for h in {data2,data3};do scp $i root@$h:/etc/yum.repos.d;done;done
+    ```
+5. 关闭 `gpgcheck`
+   ```sh
+    echo "gpgcheck=0" >> /etc/yum/pluginconf.d/priorities.conf
+   ```
 ## 安装ambari
 1. 删除一些目录
 ```
@@ -497,6 +589,7 @@ userdel zookeeper
 userdel ams
 userdel hdfs
 ```
+## 正式安装
 ### 命令行安装Ambari-server
 ```shell
 yum install ambari-server
@@ -507,6 +600,10 @@ ambari-server setup  --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connect
 ambari-server setup
 ```
 - [ ] 添加 `setup` 安装步骤图
+### setup选择
+如图：
+
+
 
 ### 数据库创建 ambari 库
 ```
@@ -517,6 +614,24 @@ mysql -uambari -p ambari < /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CRE
 ambari-server start
 ```
 ### 访问界面配置
+1. 浏览器输入 `http://data1:8080`
+2. 输入用户名密码登录 默认为 `admin admin`
+3. GetStart 填入集群名字 `ewell`
+![集群名称设置](https://s2.ax1x.com/2020/02/28/3D2oPH.png)
+4. Select Version 选择 3.1.4 版本,删除其他源只留下 `redhat7`,配置如下
+   ```
+    HDP-3.1             http://data1/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
+    HDP-3.1-GPL         http://data1/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
+    HDP-UTILS-1.1.0.22  http://data1/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
+   ```
+![HDP源配置](https://s2.ax1x.com/2020/02/28/3DWOUS.png)
+5. Target Hosts 配置 `data[1-3]`
+6. Host Registration Information 配置 `Ambari-server` 的私钥
+7. Confirm Hosts 之前手动安装过 `Ambari-agent` 就很快
+8. 选择配置这些要根据实际需求了
+9. 安装各种组件
+10. 初始界面
+11. 删除 `SmartSense`
 基本就按步骤配，遇到问题看下面
 - [ ] 添加界面操作截图
 
@@ -547,7 +662,7 @@ force_https_protocol=PROTOCOL_TLSv1_2
 哪台主机错误，就把对应的软件删除了，然后在页面重装
 1. yum list | grep xxxx
 2. yum remove hadoop*
-3. retry
+3. repeat
 
 ## 服务器软连接错误
 zookeeper无法安装，服务器文件是在老的软链接
@@ -569,3 +684,8 @@ zookeeper无法安装，服务器文件是在老的软链接
 3. 配置结束后，重启
 ![重启kafka服务](https://s2.ax1x.com/2019/11/18/Myuwbq.png)
 ![重启服务后](https://s2.ax1x.com/2019/11/18/MyuyPU.png)
+
+## 删除所有老包
+```sh
+yum remove $(yum list installed | grep HDP | awk '{print $1}') -y
+```
