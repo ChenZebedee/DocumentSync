@@ -273,7 +273,7 @@ root       soft    nproc     unlimited
 hostnamectl set-hostname xxx --static
 ```
 #### 网络配置
-给 `/etc/sysconfig/network` 文件缇娜家内容
+给 `/etc/sysconfig/network` 文件添加内容
 ```sh
 NETWORKING=yes
 HOSTNAME=<fully.qualified.domain.name>
@@ -310,16 +310,37 @@ service firewalld stop
     ```sh
     echo "umask 0022" >> /etc/profile
     ```
-### 4.7 数据库配置
+
+### 4.7 数据库安装
+#### MySQL
+1. 安装服务
+    ```sh
+    yum localinstall https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+    yum install mysql-community-server
+    systemctl start mysqld.service
+    ```
+2. 获取 root 初始密码
+    ```sh
+    grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log |tail -1
+    ```
+3. 修改root密码
+    ```sql
+    ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+    ```
+#### PostgreSQL(略)
+#### Oracle(略)
+
+### 4.8 数据库配置
 #### MySQL配置
 1. 配置最高权限
     ```sql
-    CREATE USER 'rangerdba'@'localhost' IDENTIFIED BY 'rangerdba';
-    GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost';
-    CREATE USER 'rangerdba'@'%' IDENTIFIED BY 'rangerdba';
-    GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%';
-    GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost' WITH GRANT OPTION;
-    GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%' WITH GRANT OPTION;
+    create database ranger character set utf8;
+    CREATE USER 'rangeradmin'@'localhost' IDENTIFIED BY '123456';
+    GRANT ALL PRIVILEGES ON *.* TO 'rangeradmin'@'localhost';
+    CREATE USER 'rangeradmin'@'%' IDENTIFIED BY '123456';
+    GRANT ALL PRIVILEGES ON *.* TO 'rangeradmin'@'%';
+    GRANT ALL PRIVILEGES ON *.* TO 'rangeradmin'@'localhost' WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES ON *.* TO 'rangeradmin'@'%' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
     ```
 2. 配置 SAM
@@ -378,24 +399,7 @@ ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connecto
 #### PostgreSQL配置(略)
 #### Oracle 配置(略)
 
-### 4.8 数据库安装
-#### MySQL
-1. 安装服务
-    ```sh
-    yum localinstall https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
-    yum install mysql-community-server
-    systemctl start mysqld.service
-    ```
-2. 获取 root 初始密码
-    ```sh
-    grep 'A temporary password is generated for root@localhost' /var/log/mysqld.log |tail -1
-    ```
-3. 修改root密码
-    ```sql
-    ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
-    ```
-#### PostgreSQL(略)
-#### Oracle(略)
+
 
 # 本地源安装
 ## 配置http服务
@@ -624,6 +628,7 @@ ambari-server start
     HDP-UTILS-1.1.0.22  http://data1/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
    ```
 ![HDP源配置](https://s2.ax1x.com/2020/02/28/3DWOUS.png)
+
 5. Target Hosts 配置 `data[1-3]`
 6. Host Registration Information 配置 `Ambari-server` 的私钥
 7. Confirm Hosts 之前手动安装过 `Ambari-agent` 就很快
@@ -631,6 +636,7 @@ ambari-server start
 9. 安装各种组件
 10. 初始界面
 11. 删除 `SmartSense`
+
 基本就按步骤配，遇到问题看下面
 - [ ] 添加界面操作截图
 
