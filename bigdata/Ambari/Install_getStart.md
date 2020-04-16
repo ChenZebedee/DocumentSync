@@ -7,10 +7,11 @@
             - [tar包安装方式(.tar.gz)](#tar包安装方式targz)
         - [rpm包安装方式(.rpm)](#rpm包安装方式rpm)
     - [2. 系统要求](#2-系统要求)
-        - [2.1 系统软件要求](#21-系统软件要求)
-        - [2.2 内存要求](#22-内存要求)
-        - [2.3 包大小和节点数](#23-包大小和节点数)
-        - [2.4 最大打开文件数](#24-最大打开文件数)
+        - [2.1 系统软件要求 & 预备软件安装](#21-系统软件要求--预备软件安装)
+        - [2.2 安装MySQL](#22-安装mysql)
+        - [2.3 内存要求](#23-内存要求)
+        - [2.4 包大小和节点数](#24-包大小和节点数)
+        - [2.5 最大打开文件数](#25-最大打开文件数)
             - [查看命令](#查看命令)
             - [配置教程](#配置教程)
     - [3. 信息收集](#3-信息收集)
@@ -42,6 +43,7 @@
     - [正式安装](#正式安装)
         - [命令行安装Ambari-server](#命令行安装ambari-server)
         - [初始化](#初始化)
+        - [setup选择](#setup选择)
         - [数据库创建 ambari 库](#数据库创建-ambari-库)
         - [启动服务器](#启动服务器)
         - [访问界面配置](#访问界面配置)
@@ -52,6 +54,7 @@
     - [服务器软连接错误](#服务器软连接错误)
     - [KAFKA 外网连接配置](#kafka-外网连接配置)
     - [删除所有老包](#删除所有老包)
+    - [宕机重启后 Ambari Metrics 启动失败](#宕机重启后-ambari-metrics-启动失败)
 
 <!-- /TOC -->
 # 安装前准备
@@ -78,15 +81,15 @@
 #### tar包安装方式(.tar.gz)
 将tar包解压到一个目录下，各人比较喜欢解压到 `/opt/run` 目录下，然后再通过软连接到 `/usr/local/java` 这样便于版本更新，再在 `/etc/profile`添加环境变量。 命令如下：
 ```sh
-mkdir /opt/run
-tar zxf jdk-8u181-linux-x64.tar.gz -C /opt/run
-ln -s /opt/run/jdk1.8.0_181 /usr/local/java
+mkdir /opt/binary
+tar zxf jdk-8u181-linux-x64.tar.gz -C /opt/binary
+ln -s /opt/binary/jdk1.8.0_181 /usr/local/java
 cat << EOF >> /etc/profile
 #JAVA_HOME
 export JAVA_HOME=/usr/local/java
-export JRE_HOME=$JAVA_HOME/jre
-export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib
-export PATH=${PATH}:${JAVA_HOME}/bin
+export JRE_HOME=\$JAVA_HOME/jre
+export CLASSPATH=.:\$JAVA_HOME/lib:\$JRE_HOME/lib
+export PATH=\${PATH}:\${JAVA_HOME}/bin
 EOF
 ```
 
@@ -100,15 +103,53 @@ rpm -ivh jdk-7u25-linux-x64.rpm
 
 ## 2. 系统要求
 -------------------
-### 2.1 系统软件要求
+### 2.1 系统软件要求 & 预备软件安装
 - yum and rpm (RHEL/CentOS/Oracle/Amazon Linux)
 - `scp, curl, unzip, tar, wget,` and `gcc*`
 - Python (with python-devel*)
->*Ambari Metrics Monitor uses a python library (psutil) which requires gcc and python-devel packages.
+> * Ambari Metrics Monitor uses a python library (psutil) which requires gcc and python-devel packages.
 ```sh
-yum install -y scp curl unzip tar wget gcc python ntp
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+yum install -C nc openssl redhat-lsb pyhton-devel python-libs gcc* vim createrepo  ntpdate ntp libtirpc libtirpc-devel python-kerberos -y
 ```
-### 2.2 内存要求
+
+### 2.2 安装MySQL
+1. 先删除自带 mariadb-libs-5.5.60-1.el7_5.x86_64
+    ```shell
+    rpm -e --nodeps mariadb-libs-5.5.60-1.el7_5.x86_64
+    ```
+2. 按顺序安装包
+    ```sh
+    rpm -ivh mysql-community-common-5.7.29-1.el7.x86_64.rpm
+    rpm -ivh mysql-community-libs-5.7.29-1.el7.x86_64.rpm
+    rpm -ivh mysql-community-client-5.7.29-1.el7.x86_64.rpm
+    rpm -ivh mysql-community-server-5.7.29-1.el7.x86_64.rpm
+    rpm -ivh mysql-community-devel-5.7.29-1.el7.x86_64.rpm
+    ```
+3. 启动
+    ```sh
+    systemctl start mysqld
+    ```
+4. 查看初始化密码
+    ```sh
+    grep 'temporary password' /var/log/mysqld.log
+    ```
+5. 设置简单密码模式
+    ```sh
+    cat "validate_password = off" >> /etc/my.cnf
+    ```
+6. 修改密码
+    ```sql
+    ALTER USER 'root'@'localhost' IDENTIFIED BY 'ewell@123'；
+    ```
+7. 创建超级用户
+    ```sql
+    CREATE USER 'ewell'@'%' IDENTIFIED BY 'ewell@123';
+    GRANT ALL ON *.* TO 'ewell'@'%';
+    GRANT all ON *.* TO 'ewell'@'%' WITH GRANT OPTION;
+    flush  privileges;
+    ```
+### 2.3 内存要求
 |主机数|内存要求|磁盘要求|
 |:-------:|:--------:|:--------:|
 1       |1024 MB    |10 GB
@@ -121,7 +162,7 @@ yum install -y scp curl unzip tar wget gcc python ntp
 2000    |16384 MB   |500 GB
 
 
-### 2.3 包大小和节点数
+### 2.4 包大小和节点数
 |      Name      |          Size   |Inodes|
 |:---:|:---:|:---:|
 Ambari Server               |100MB  |5,000
@@ -133,7 +174,7 @@ After Ambari Server Setup   |N/A    |4,000
 After Ambari Server Start   |N/A    |500
 After Ambari Agent Start    |N/A    |200
 
-### 2.4 最大打开文件数
+### 2.5 最大打开文件数
 #### 查看命令
 ```sh
 ulimit -Sn
@@ -273,7 +314,7 @@ root       soft    nproc     unlimited
 hostnamectl set-hostname xxx --static
 ```
 #### 网络配置
-给 `/etc/sysconfig/network` 文件缇娜家内容
+给 `/etc/sysconfig/network` 文件添加内容
 ```sh
 NETWORKING=yes
 HOSTNAME=<fully.qualified.domain.name>
@@ -300,7 +341,7 @@ service firewalld stop
     SELINUX=disabled
     ```
     ```sh
-    sed 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/selinux/config -i`
+    sed 's#SELINUX=enforcing#SELINUX=disabled#g' /etc/selinux/config -i
     ```
 3. 修改`/etc/yum/pluginconf.d/refresh-packagekit.conf`
     ```properties
@@ -688,3 +729,6 @@ zookeeper无法安装，服务器文件是在老的软链接
 ```sh
 yum remove $(yum list installed | grep HDP | awk '{print $1}') -y
 ```
+
+## 宕机重启后 Ambari Metrics 启动失败
+到主机上，将相关进程强制 kill 之后，再次启动

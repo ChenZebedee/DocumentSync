@@ -19,3 +19,20 @@ Oct 12 13:22:40 hadoop02 sshd[29770]: Authentication refused: bad ownership or m
 
     chmod 600 /home/${user_home}/.ssh/authorized_keys
 
+## Linux 登录编码问题
+> 报错：-bash: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+解决方法：
+
+在 `/etc/environment` 中添加
+```
+LANG=en_US.utf-8
+LC_ALL=en_US.utf-8
+```
+
+### 快捷命令
+```
+cat << EOF >> /etc/environment
+LANG=en_US.utf-8
+LC_ALL=en_US.utf-8
+EOF
+```
