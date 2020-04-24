@@ -1,0 +1,37 @@
+
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+0. 系统准备
+1. 解决yum安装问题
+2. 安装MySQL
+    2.1 先删除自带 mariadb-libs-5.5.60-1.el7_5.x86_64
+        rpm -e --nodeps mariadb-libs-5.5.60-1.el7_5.x86_64
+
+    2.2 按顺序安装包
+        rpm -ivh mysql-community-common-5.7.29-1.el7.x86_64.rpm
+        rpm -ivh mysql-community-libs-5.7.29-1.el7.x86_64.rpm
+        rpm -ivh mysql-community-client-5.7.29-1.el7.x86_64.rpm
+        rpm -ivh mysql-community-server-5.7.29-1.el7.x86_64.rpm
+        rpm -ivh mysql-community-devel-5.7.29-1.el7.x86_64.rpm
+    2.3 启动
+        systemctl start mysqld
+    2.4 查看初始化密码
+        grep 'temporary password' /var/log/mysqld.log
+    2.5 设置简单密码模式
+        cat "validate_password = off" >> /etc/my.cnf
+    2.6 修改密码
+        ALTER USER 'root'@'localhost' IDENTIFIED BY 'ewell@123'；
+    2.7 创建超级用户
+        CREATE USER 'ewell'@'%' IDENTIFIED BY 'ewell@123';
+        GRANT ALL ON *.* TO 'ewell'@'%';
+        GRANT all ON *.* TO 'ewell'@'%' WITH GRANT OPTION;
+        flush  privileges;
+3. 安装Ambari
+4. 开始安装服
+
+
+curl -u admin:admin -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop SmartSense via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://master:8080/api/v1/clusters/ewell/services/SMARTSENSE
+
+curl -u admin:admin -i -H 'X-Requested-By: ambari' -X POST -d '{"RequestInfo": {"context" :"Uninstall SmartSense via REST", "command":"Uninstall"}, "Requests/resource_filters":[{"hosts":"comma separated host names", "service_name":"SMARTSENSE", "component_name":"HST_AGENT"}]}' http://master:8080/api/v1/clusters/ewell/requests
+
+curl -u admin:admin -H 'X-Requested-By: ambari' -X DELETE http://master:8080/api/v1/clusters/ewell/services/SMARTSENSE
