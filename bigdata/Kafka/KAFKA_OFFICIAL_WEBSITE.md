@@ -38,4 +38,10 @@ Kafka 核心APi：
 Kafka通过TPC协议进行通信。并且为Kafka提供了Java客户端，但是客户端支持多种语言
 
 
-#### topic and logs
+#### topic and logs ( logs 指存储的数据而不是日志 )
+topic 是多用户的 一个 topic 可以有零个，一个或多个消费者
+
+每个topic都会维护一个分区日志
+![分区日志的维护](http://kafka.apache.org/20/images/log_anatomy.png)
+每个分区有序，并且每条记录都分配一个唯一的offset用于各分区标识
+
