@@ -1,3 +1,21 @@
+
+<!-- TOC -->
+
+- [HIVE_DATA_SKEW](#hive_data_skew)
+    - [JOIN 无关数据倾斜优化](#join-无关数据倾斜优化)
+        - [group by 数据倾斜优化](#group-by-数据倾斜优化)
+        - [count distinct 优化](#count-distinct-优化)
+    - [JOIN 相关数据倾斜优化](#join-相关数据倾斜优化)
+        - [大表 join 小表优化](#大表-join-小表优化)
+        - [大表 join 大表](#大表-join-大表)
+            - [方案一：间接 MapJoin](#方案一间接-mapjoin)
+            - [方案二：join 时使用 case when 语句](#方案二join-时使用-case-when-语句)
+            - [方案三：倍数 B 表再取模 join](#方案三倍数-b-表再取模-join)
+                - [通用方案：](#通用方案)
+                - [专用方案:](#专用方案)
+            - [方案4：动态一分为二](#方案4动态一分为二)
+
+<!-- /TOC -->
 # HIVE_DATA_SKEW
 ## JOIN 无关数据倾斜优化
 ### group by 数据倾斜优化
