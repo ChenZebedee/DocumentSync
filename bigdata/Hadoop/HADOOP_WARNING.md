@@ -74,3 +74,6 @@ java.io.IOException: Timed out waiting 20000ms for a quorum of nodes to respond.
     ```shell
     forceSync=no
     ```
+
+
+## namenode 已启动 ui访问 404
