@@ -14,7 +14,7 @@
             - [hostname](#hostname)
             - [网络配置](#网络配置)
         - [防火墙配置](#防火墙配置)
-        - [NTP配置(有点问题，之后再看)](#ntp配置有点问题之后再看)
+        - [NTP配置](#ntp配置)
             - [1. 安装 `yum install ntpdate ntp -y`](#1-安装-yum-install-ntpdate-ntp--y)
             - [2. /etc/ntp.conf配置](#2-etcntpconf配置)
         - [每台机器重启ntp服务器](#每台机器重启ntp服务器)
@@ -43,12 +43,17 @@
 <!-- /TOC -->
 
 # 系统准备
+
 ## 磁盘准备
+
 将数据盘挂载到 `/data` 下
+
 ```
 mount /xxx/xxx/xxx /data
 ```
+
 ## 包准备
+
 1. ambari-2.7.4.0-centos7.tar.gz
 2. ambari.repo
 3. cache.tar.gz
@@ -190,8 +195,7 @@ EOF
 
 3. 测试是否通过
 
-
-###  DNS 和 NSCD配置
+### DNS 和 NSCD配置
 
 #### hosts file
 
@@ -231,7 +235,7 @@ systemctl disable firewalld
 service firewalld stop
 ```
 
-### NTP配置(有点问题，之后再看)
+### NTP配置
 
 #### 1. 安装 `yum install ntpdate ntp -y`
 
@@ -240,6 +244,7 @@ service firewalld stop
 1. 服务端配置
 
     ```properties
+    cat << EOF > /etc/ntp.conf
     # For more information about this file, see the man pages
     # ntp.conf(5), ntp_acc(5), ntp_auth(5), ntp_clock(5), ntp_misc(5), ntp_mon(5).
 
@@ -254,7 +259,7 @@ service firewalld stop
     # the administrative functions.
     restrict 127.0.0.1
     restrict ::1
-    restrict ${局域网段} mask 255.255.255.0
+    restrict ${server_network} mask 255.255.255.0
 
     # Hosts on local network are less restricted.
     #restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap
@@ -331,7 +336,7 @@ service firewalld stop
     #server 1.centos.pool.ntp.org iburst
     #server 2.centos.pool.ntp.org iburst
     #server 3.centos.pool.ntp.org iburst
-    server ${本地服务器IP}
+    server ${server_ip}
 
     #broadcast 192.168.1.255 autokey	# broadcast server
     #broadcastclient			# broadcast client
@@ -346,7 +351,7 @@ service firewalld stop
     includefile /etc/ntp/crypto/pw
 
     # Key file containing the keys and key identifiers used when operating
-    # with symmetric key cryptography. 
+    # with symmetric key cryptography.
     keys /etc/ntp/keys
 
     # Specify the key identifiers which are trusted.
@@ -704,13 +709,14 @@ ambari-server start
 3. GetStart 填入集群名字 `ewell`
 ![集群名称设置](https://s2.ax1x.com/2020/02/28/3D2oPH.png)
 4. Select Version 选择 3.1.4 版本,删除其他源只留下 `redhat7`,配置如下
-   ```
+
+   ```p
     HDP-3.1             http://data1/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
     HDP-3.1-GPL         http://data1/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
     HDP-UTILS-1.1.0.22  http://data1/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
    ```
-![HDP源配置](https://s2.ax1x.com/2020/02/28/3DWOUS.png)
 
+![HDP源配置](https://s2.ax1x.com/2020/02/28/3DWOUS.png)
 5. Target Hosts 配置 `data[1-3]`
 6. Host Registration Information 配置 `Ambari-server` 的私钥
 7. Confirm Hosts 之前手动安装过 `Ambari-agent` 就很快
@@ -719,10 +725,10 @@ ambari-server start
 10. 初始界面
 11. 删除 `SmartSense`
 
-
-
 ### 配置安装完后删除SmartSense
+
 由于这个服务是辅助hadoop的并且，没有id就启动不了，而id是官网发放的，所以就干脆删除了
+
 ```sh
 curl -u admin:admin -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop SmartSense via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://qysjzx1:8080/api/v1/clusters/qysjzx/services/SMARTSENSE
 
@@ -731,29 +737,36 @@ curl -u admin:admin -i -H 'X-Requested-By: ambari' -X POST -d '{"RequestInfo": {
 curl -u admin:admin -H 'X-Requested-By: ambari' -X DELETE http://qysjzx1:8080/api/v1/clusters/qysjzx/services/SMARTSENSE
 ```
 
+# 遇到的问题
 
-#  遇到的问题
 ## ssl问题
-```
+
+```python
 etUtil.py:96 - EOF occurred in violation of protocol (_ssl.c:579)
 NetUtil.py:97 - SSLError: Failed to connect. Please check openssl library versions.
 ```
+
 编辑 `/etc/ambari-agent/conf/ambari-agent.ini` 文件，添加
+
 ```INI
 [security]
 force_https_protocol=PROTOCOL_TLSv1_2
 ```
+
 ## 安装HDP时，HST Agent Instal安装失败(扩展，任何一个组件都这样操作)
+
 哪台主机错误，就把对应的软件删除了，然后在页面重装
+
 1. yum list | grep xxxx
 2. yum remove hadoop*
 3. repeat
 
 ## 服务器软连接错误
-zookeeper无法安装，服务器文件是在老的软链接
 
+zookeeper无法安装，服务器文件是在老的软链接。在服务器上的/usr/hdp/current删除原来的zookeeper相关的目录重新安装即可
 
 ## KAFKA 外网连接配置
+
 1. 在kafka配置界面，`Manage Config Groups` 新增3个组，并且每个分组添加对应服务器
 ![管理配置组](https://s2.ax1x.com/2019/11/18/Myn81J.png)
 ![管理界面](https://s2.ax1x.com/2019/11/18/MynI3Q.png)
@@ -771,9 +784,11 @@ zookeeper无法安装，服务器文件是在老的软链接
 ![重启服务后](https://s2.ax1x.com/2019/11/18/MyuyPU.png)
 
 ## 删除所有老包
+
 ```sh
 yum remove $(yum list installed | grep HDP | awk '{print $1}') -y
 ```
 
 ## 宕机重启后 Ambari Metrics 启动失败
-到主机上，将相关进程强制 kill 之后，再次启动
+
+到主机上，将相关进程强制 kill 之后，再次启动。
