@@ -18,6 +18,7 @@
             - [1. 安装 `yum install ntpdate ntp -y`](#1-安装-yum-install-ntpdate-ntp--y)
             - [2. /etc/ntp.conf配置](#2-etcntpconf配置)
         - [每台机器重启ntp服务器](#每台机器重启ntp服务器)
+        - [手动同步时间](#手动同步时间)
     - [离线yum包安装](#离线yum包安装)
     - [JAVA安装](#java安装)
     - [安装MySQL](#安装mysql)
@@ -55,14 +56,11 @@ mount /xxx/xxx/xxx /data
 ## 包准备
 
 1. ambari-2.7.4.0-centos7.tar.gz
-2. ambari.repo
 3. cache.tar.gz
 4. Centos-7.repo
 5. HDP-3.1.4.0-centos7-rpm.tar.gz
 6. HDP-GPL-3.1.4.0-centos7-gpl.tar.gz
 7. HDP-UTILS-1.1.0.22-centos7.tar.gz
-8. hdp.gpl.repo
-9. hdp.repo
 10. jdk-8u181-linux-x64.tar.gz
 11. libxml2-2.9.1-6.el7_2.3.x86_64.rpm
 12. mysql-5.7.29-1.el7.x86_64.rpm-bundle.tar
@@ -224,7 +222,7 @@ HOSTNAME=<fully.qualified.domain.name>
 cat << EOF >> /etc/sysconfig/network
 # Created by anaconda
 NETWORKING=yes
-HOSTNAME=data1
+HOSTNAME=$(hostname)
 EOF
 ```
 
@@ -232,7 +230,7 @@ EOF
 
 ```sh
 systemctl disable firewalld
-service firewalld stop
+systemctl stop firewalld
 ```
 
 ### NTP配置
@@ -243,7 +241,7 @@ service firewalld stop
 
 1. 服务端配置
 
-    ```properties
+    ```shell
     cat << EOF > /etc/ntp.conf
     # For more information about this file, see the man pages
     # ntp.conf(5), ntp_acc(5), ntp_auth(5), ntp_clock(5), ntp_misc(5), ntp_mon(5).
@@ -307,11 +305,13 @@ service firewalld stop
     # CVE-2013-5211 for more details.
     # Note: Monitoring will not be disabled with the limited restriction flag.
     disable monitor
+    EOF
     ```
 
 2. 配置客户端
 
-    ```properties
+    ```shell
+    cat << EOF > /etc/ntp.conf
     # For more information about this file, see the man pages
     # ntp.conf(5), ntp_acc(5), ntp_auth(5), ntp_clock(5), ntp_misc(5), ntp_mon(5).
 
@@ -371,12 +371,20 @@ service firewalld stop
     # CVE-2013-5211 for more details.
     # Note: Monitoring will not be disabled with the limited restriction flag.
     disable monitor
+    EOF
     ```
 
 ### 每台机器重启ntp服务器
 
 ```sh
 systemctl restart ntpd
+```
+
+### 手动同步时间
+```sh
+service ntpd stop
+ntpdate master_IP
+service ntpd start
 ```
 
 ## 离线yum包安装
@@ -392,7 +400,7 @@ systemctl restart ntpd
 2. 通过命令删除
 
     ```sh
-    yum remove "*openjdk*"
+    yum remove "*openjdk*" -y
     ```
 
     >最好把前面列出来的，一个一个删除
@@ -443,6 +451,10 @@ systemctl restart ntpd
 2. 按顺序安装包
 
     ```sh
+
+    mkdir mysql
+    tar xf mysql-5.7.29-1.el7.x86_64.rpm-bundle.tar -C mysql
+    cd mysql/
     rpm -ivh mysql-community-common-5.7.29-1.el7.x86_64.rpm
     rpm -ivh mysql-community-libs-5.7.29-1.el7.x86_64.rpm
     rpm -ivh mysql-community-client-5.7.29-1.el7.x86_64.rpm
@@ -450,27 +462,31 @@ systemctl restart ntpd
     rpm -ivh mysql-community-devel-5.7.29-1.el7.x86_64.rpm
     ```
 
-3. 设置简单密码模式
 
-    ```sh
-    echo "validate_password=off" >> /etc/my.cnf
-    ```
 
-4. 启动
+3. 启动
 
     ```sh
     systemctl start mysqld
     ```
 
-5. 查看初始化密码
+4. 查看初始化密码
 
     ```sh
     grep 'temporary password' /var/log/mysqld.log
     ```
 
+5. 设置简单密码模式
+
+    ```sh
+    echo "validate_password=off" >> /etc/my.cnf
+    systemctl restart mysqld
+    ```
+
 6. 登陆之后修改密码修改密码
 
     ```sql
+    mysql -uroot -p
     ALTER USER 'root'@'localhost' IDENTIFIED BY 'ewell@123';
     ```
 
@@ -512,6 +528,8 @@ systemctl restart ntpd
 
     ```sh
     yum install -y yum-utils createrepo httpd
+    sed -i 's#Listen 80#Listen 808#g' /etc/httpd/conf/httpd.conf
+    echo "ServerName localhost:808" >> /etc/httpd/conf/httpd.conf
     ```
 
 3. 会有目录 `/var/www/html` 并创建目录
@@ -530,15 +548,7 @@ systemctl restart ntpd
     tar zxf HDP-GPL-3.1.4.0-centos7-gpl.tar.gz -C /var/www/html/hdp/3.1.4
     ```
 
-5. 获取repo配置文件
-
-    ```sh
-    cp ambari.repo /etc/yum.repos.d
-    cp hdp.gpl.repo /etc/yum.repos.d
-    cp hdp.repo /etc/yum.repos.d
-    ```
-
-6. 配置repo文件
+5. 配置repo文件
 
     ambari.repo:
 
@@ -546,9 +556,9 @@ systemctl restart ntpd
     #VERSION_NUMBER=2.7.4.0-118
     [ambari-2.7.4.0]
     name=ambari Version - ambari-2.7.4.0
-    baseurl=http://$(hostname)/ambari/2.7.4/ambari/centos7/2.7.4.0-118/
+    baseurl=http://$(hostname):808/ambari/2.7.4/ambari/centos7/2.7.4.0-118/
     gpgcheck=1
-    gpgkey=http://$(hostname)/ambari/2.7.4/ambari/centos7/2.7.4.0-118/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/ambari/2.7.4/ambari/centos7/2.7.4.0-118/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     ```
@@ -560,9 +570,9 @@ systemctl restart ntpd
     #VERSION_NUMBER=2.7.4.0-118
     [ambari-2.7.4.0]
     name=ambari Version - ambari-2.7.4.0
-    baseurl=http://$(hostname)/ambari/2.7.4/ambari/centos7/2.7.4.0-118/
+    baseurl=http://$(hostname):808/ambari/2.7.4/ambari/centos7/2.7.4.0-118/
     gpgcheck=1
-    gpgkey=http://$(hostname)/ambari/2.7.4/ambari/centos7/2.7.4.0-118/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/ambari/2.7.4/ambari/centos7/2.7.4.0-118/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     EOF
@@ -574,17 +584,17 @@ systemctl restart ntpd
     #VERSION_NUMBER=3.1.4.0-315
     [HDP-3.1.4.0]
     name=HDP Version - HDP-3.1.4.0
-    baseurl=http://$(hostname)/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
+    baseurl=http://$(hostname):808/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
     gpgcheck=1
-    gpgkey=http://$(hostname)/hdp/3.1.4/HDP/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/hdp/3.1.4/HDP/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
 
     [HDP-UTILS-1.1.0.22]
     name=HDP-UTILS Version - HDP-UTILS-1.1.0.22
-    baseurl=http://$(hostname)/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
+    baseurl=http://$(hostname):808/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
     gpgcheck=1
-    gpgkey=http://$(hostname)/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     ```
@@ -596,17 +606,17 @@ systemctl restart ntpd
     #VERSION_NUMBER=3.1.4.0-315
     [HDP-3.1.4.0]
     name=HDP Version - HDP-3.1.4.0
-    baseurl=http://$(hostname)/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
+    baseurl=http://$(hostname):808/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
     gpgcheck=1
-    gpgkey=http://$(hostname)/hdp/3.1.4/HDP/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/hdp/3.1.4/HDP/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
 
     [HDP-UTILS-1.1.0.22]
     name=HDP-UTILS Version - HDP-UTILS-1.1.0.22
-    baseurl=http://$(hostname)/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
+    baseurl=http://$(hostname):808/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
     gpgcheck=1
-    gpgkey=http://$(hostname)/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     EOF
@@ -618,9 +628,9 @@ systemctl restart ntpd
     #VERSION_NUMBER=3.1.4.0-315
     [HDP-GPL-3.1.4.0]
     name=HDP-GPL Version - HDP-GPL-3.1.4.0
-    baseurl=http://$(hostname)/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
+    baseurl=http://$(hostname):808/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
     gpgcheck=1
-    gpgkey=http://$(hostname)/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     ```
@@ -632,9 +642,9 @@ systemctl restart ntpd
     #VERSION_NUMBER=3.1.4.0-315
     [HDP-GPL-3.1.4.0]
     name=HDP-GPL Version - HDP-GPL-3.1.4.0
-    baseurl=http://$(hostname)/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
+    baseurl=http://$(hostname):808/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
     gpgcheck=1
-    gpgkey=http://$(hostname)/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+    gpgkey=http://$(hostname):808/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
     enabled=1
     priority=1
     EOF
@@ -643,7 +653,7 @@ systemctl restart ntpd
 7. 将 `ambari.repo hdp.repo hdp.gpl.repo` 三个文件复制到其他机器上
 
     ```sh
-    for i in {/etc/yum.repos.d/ambari.repo,/etc/yum.repos.d/hdp.repo,/etc/yum.repos.d/hdp.gpl.repo};do for h in $(cat /etc/hosts | awk '{print $2}');do scp $i root@$h:/etc/yum.repos.d;done;done
+    for i in {/etc/yum.repos.d/ambari.repo,/etc/yum.repos.d/hdp.repo,/etc/yum.repos.d/hdp.gpl.repo};do for h in $(host_name=$(hostname);le=${#host_name};prex_name=${host_name:0:((${le}-1))};cat /etc/hosts| grep ${prex_name} | awk '{print $2}');do scp $i root@$h:/etc/yum.repos.d;done;done
     ```
 
 8. 生成本地源
@@ -668,13 +678,13 @@ systemctl restart ntpd
 ### 启动httpd
 
 ```shell
-systemctl start httpd
+systemctl restart httpd
 ```
 
 ### 命令行安装Ambari-server
 
 ```shell
-yum install ambari-server
+yum install ambari-server -y
 ```
 
 ### 初始化
@@ -711,9 +721,9 @@ ambari-server start
 4. Select Version 选择 3.1.4 版本,删除其他源只留下 `redhat7`,配置如下
 
    ```p
-    HDP-3.1             http://data1/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
-    HDP-3.1-GPL         http://data1/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
-    HDP-UTILS-1.1.0.22  http://data1/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
+    HDP-3.1             http://qysjzx1:808/hdp/3.1.4/HDP/centos7/3.1.4.0-315/
+    HDP-3.1-GPL         http://qysjzx1:808/hdp/3.1.4/HDP-GPL/centos7/3.1.4.0-315/
+    HDP-UTILS-1.1.0.22  http://qysjzx1:808/hdp/3.1.4/HDP-UTILS/centos7/1.1.0.22/
    ```
 
 ![HDP源配置](https://s2.ax1x.com/2020/02/28/3DWOUS.png)
@@ -721,7 +731,7 @@ ambari-server start
 6. Host Registration Information 配置 `Ambari-server` 的私钥
 7. Confirm Hosts 之前手动安装过 `Ambari-agent` 就很快
 8. 选择配置这些要根据实际需求了
-9. 安装各种组件
+9. 安装各种组件(kafka要建集群-并且修改`default.replication.factor`为`3`)
 10. 初始界面
 11. 删除 `SmartSense`
 
@@ -730,11 +740,13 @@ ambari-server start
 由于这个服务是辅助hadoop的并且，没有id就启动不了，而id是官网发放的，所以就干脆删除了
 
 ```sh
-curl -u admin:admin -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop SmartSense via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://qysjzx1:8080/api/v1/clusters/qysjzx/services/SMARTSENSE
+host_name=$(hostname);le=${#host_name};prex_name=${host_name:0:((${le}-1))}
 
-curl -u admin:admin -i -H 'X-Requested-By: ambari' -X POST -d '{"RequestInfo": {"context" :"Uninstall SmartSense via REST", "command":"Uninstall"}, "Requests/resource_filters":[{"hosts":"comma separated host names", "service_name":"SMARTSENSE", "component_name":"HST_AGENT"}]}' http://qysjzx1:8080/api/v1/clusters/qysjzx/requests
+curl -u admin:admin -i -H 'X-Requested-By: ambari' -X PUT -d '{"RequestInfo": {"context" :"Stop SmartSense via REST"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://${prex_name}1:8080/api/v1/clusters/${prex_name}/services/SMARTSENSE
 
-curl -u admin:admin -H 'X-Requested-By: ambari' -X DELETE http://qysjzx1:8080/api/v1/clusters/qysjzx/services/SMARTSENSE
+curl -u admin:admin -i -H 'X-Requested-By: ambari' -X POST -d '{"RequestInfo": {"context" :"Uninstall SmartSense via REST", "command":"Uninstall"}, "Requests/resource_filters":[{"hosts":"comma separated host names", "service_name":"SMARTSENSE", "component_name":"HST_AGENT"}]}' http://${prex_name}1:8080/api/v1/clusters/${prex_name}/requests
+
+curl -u admin:admin -H 'X-Requested-By: ambari' -X DELETE http://${prex_name}1:8080/api/v1/clusters/${prex_name}/services/SMARTSENSE
 ```
 
 # 遇到的问题

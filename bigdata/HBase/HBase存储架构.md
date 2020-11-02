@@ -1,15 +1,15 @@
 <!-- TOC -->
 
-- [HBase存储架构](#hbase%e5%ad%98%e5%82%a8%e6%9e%b6%e6%9e%84)
-  - [Client](#client)
-  - [Zookeeper](#zookeeper)
-  - [HMaster](#hmaster)
-  - [HRegionServer](#hregionserver)
-  - [HRegion](#hregion)
-    - [HRegion定位：](#hregion%e5%ae%9a%e4%bd%8d)
-  - [Store](#store)
-  - [StoreFile](#storefile)
-  - [HFile](#hfile)
+- [HBase存储架构](#hbase存储架构)
+    - [Client](#client)
+    - [Zookeeper](#zookeeper)
+    - [HMaster](#hmaster)
+    - [HRegionServer](#hregionserver)
+    - [HRegion](#hregion)
+        - [HRegion定位：](#hregion定位)
+    - [Store](#store)
+    - [StoreFile](#storefile)
+    - [HFile](#hfile)
 
 <!-- /TOC -->
 # HBase存储架构
@@ -46,7 +46,7 @@ HRegionServer的作用：
 ## HRegion
 table 在行的方向上分隔为多个 Region。Region 是 HBase 中分布式存储和负载均衡的最小单元，即不同的 region 可以分别在不同的 Region Server 上，但同一个 Region 是不会拆分到多个 server 上。
 
-Region 按大小分隔，每个表一行是只有一个 region。随着数据不断插入表，region 不断增大，当region 的某个列族达到一个阈值（默认256M）时就会分成两个新的 region。
+Region 按大小分隔，region 中包含一个或多个列簇。随着数据不断插入表，region 不断增大，当region 的某个列族达到一个阈值（默认256M）时就会分成两个新的 region。
 
 每个 region 由以下信息标识：
 * <表名, startRowkey ,创建时间>
