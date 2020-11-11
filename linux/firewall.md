@@ -47,6 +47,17 @@ firewall-cmd --zone=public --query-port=80/tcp
 ```
 
 ## port -- delete
+
 ```sh
 firewall-cmd --zone=public --remove-port=80/tcp --permanent
+```
+
+## 批量添加目前已存在端口
+
+```sh
+#tcp端口添加
+for host in {192.168.60.11,192.168.60.13,192.168.60.129,192.168.60.150,192.168.60.151,192.168.60.152,192.168.60.153,192.168.60.154,192.168.60.155,192.168.60.156,192.168.60.157,192.168.60.158,192.168.60.159,192.168.60.166};do for port in $(netstat -anlt  | awk  '{n=split($0, a,":");if (n==7) print a[4] ;else print a[2] }' | awk '{print $1}' | sort|uniq);do firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="${host}" port protocol="tcp" port="${port}" accept";done;done
+
+#udp端口添加
+for host in {192.168.60.11,192.168.60.13,192.168.60.129,192.168.60.150,192.168.60.151,192.168.60.152,192.168.60.153,192.168.60.154,192.168.60.155,192.168.60.156,192.168.60.157,192.168.60.158,192.168.60.159,192.168.60.166};do for port in $(netstat -anlu  | awk  '{n=split($0, a,":");if (n==7) print a[4] ;else print a[2] }' | awk '{print $1}' | sort|uniq);do firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="${host}" port protocol="udp" port="${port}" accept";done;done
 ```

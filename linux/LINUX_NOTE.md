@@ -36,3 +36,9 @@ LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
 EOF
 ```
+
+## 根据hosts传输文件到同主题机器
+
+```shell
+for i in $(host_name=hostname;le=${#host_name};prex_name=${host_name:0:((${le}-1))};cat /etc/hosts| grep ${prex_name});do scp jdk-8u181-linux-x64.tar.gz root@$i:;done
+```
