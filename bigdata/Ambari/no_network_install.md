@@ -504,10 +504,6 @@ service ntpd start
 1. 先配置数据库
 
     ```sql
-    create database ambari character set utf8;
-    CREATE USER 'ambari'@'%' IDENTIFIED BY '123456';
-    GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'%';
-    FLUSH PRIVILEGES;
     create database hive character set utf8;
     CREATE USER 'hive'@'%' IDENTIFIED BY '123456';
     GRANT ALL PRIVILEGES ON hive.* TO 'hive'@'%';
@@ -521,6 +517,10 @@ service ntpd start
     CREATE USER 'rangeradmin'@'%' IDENTIFIED BY '123456';
     GRANT ALL PRIVILEGES ON rangeradmin.* TO 'rangeradmin'@'%';
     GRANT ALL PRIVILEGES ON ranger.* TO 'rangeradmin'@'%';
+    FLUSH PRIVILEGES;
+    create database ambari character set utf8;
+    CREATE USER 'ambari'@'%' IDENTIFIED BY '123456';
+    GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'%';
     FLUSH PRIVILEGES;
     ```
 
