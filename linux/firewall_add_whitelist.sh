@@ -9,8 +9,8 @@
 
 
 check_firewall(){
-    netstat -anp | grep firewalld &> /dev/null
-    if [ $? -eq 0 ]
+    FIREWALLD=`systemctl status sshd | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1`
+    if [ "$FIREWALLD" == "running" ]
     then
         echo "防火墙已启动"
     else 
