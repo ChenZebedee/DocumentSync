@@ -17,3 +17,18 @@
 2. 设置分区拉取阈值，调小 `poll` 拉取的大小
 
 # 出错现象5:kafka消费的offset超过了记录的offset导致LAG为负数
+
+# the request included a message larger than the max message to Kafka 报错
+
+1. 修改produce配置:
+
+    ```properties
+    #扩大
+    max.request.size=5024000 
+    send.buffer.bytes=5024000  
+    ```
+
+2. 修改server.properties
+    ```properties
+    message.max.bytes=5024000
+    ```
