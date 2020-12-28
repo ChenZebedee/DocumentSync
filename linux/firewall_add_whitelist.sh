@@ -29,7 +29,7 @@ for index in "${!ip_list[@]}";do for port in $(netstat -anlt  | awk  '{n=split($
 #udp端口添加
 for index in ${!ip_list[@]};do for port in $(netstat -anlu  | awk  '{n=split($0, a,":");if (n==7) print a[4] ;else print a[2] }' | awk '{print $1}' | sort|uniq);do firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="${ip_list[index]}" port protocol="udp" port="${port}" accept";done;done
 
-for port in $(echo "8082 8096 8095 8098 9096 8369 7809");do firewall-cmd --zone=public --add-port=${port}/tcp --permanent;done
+for port in $(echo "8082 8096 8095 8098 9096 8369 7809 8082 8096 8095 8098 9096 8369 7809 11035 9683 8097");do firewall-cmd --zone=public --add-port=${port}/tcp --permanent;done
 
 #批量端口添加
 for index in ${!ip_list[@]};do for ports in $(echo "7800-7850");do firewall-cmd --permanent --add-rich-rule="rule family="ipv4" source address="${ip_list[index]}" port protocol="tcp" port="${ports}" accept";done;done
