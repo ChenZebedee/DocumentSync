@@ -38,7 +38,7 @@ mount_cdrpm() {
 #
 # To use this repo, put in your DVD and use it with the other repos too:
 #  yum --enablerepo=c7-media [command]
-#  
+#
 # or for ONLY the media repo, do this:
 #
 #  yum --disablerepo=\* --enablerepo=c7-media [command]
@@ -290,7 +290,7 @@ log.retention.hours=168
 default.replication.factor=3
 log.segment.bytes=1073741824
 log.retention.check.interval.ms=300000
-zookeeper.connect= ${IP01}:2181,${IP02}:2181,${IP03}:2181 
+zookeeper.connect= ${IP01}:2181,${IP02}:2181,${IP03}:2181
 zookeeper.connection.timeout.ms=6000
 group.initial.rebalance.delay.ms=0
 
@@ -510,11 +510,11 @@ config_tool_manager(){
     cat << EOF > ${work_dir}/pages/tool-manager/config.js
 (function() {
   window.DataConfig = {
-	  
+
     axios: 'http://${IP01}:8096', // 目标端地址
     title: '${page_tile}',
     logo: '/logo.png', // 项目logo
-	
+
     isAccessSystem: true, // 是否切换系统
     homeHref: '#', // 切换系统之后跳转到的主页面
     menuUrlList: [
