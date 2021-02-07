@@ -290,7 +290,7 @@ log.retention.hours=168
 default.replication.factor=3
 log.segment.bytes=1073741824
 log.retention.check.interval.ms=300000
-zookeeper.connect= ${IP01}:2181,${IP02}:2181,${IP03}:2181
+zookeeper.connect=${IP01}:2181,${IP02}:2181,${IP03}:2181
 zookeeper.connection.timeout.ms=6000
 group.initial.rebalance.delay.ms=0
 
