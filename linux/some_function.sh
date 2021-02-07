@@ -338,9 +338,9 @@ forceSync=no
 # Set to "0" to disable auto purge feature
 #autopurge.purgeInterval=1
 
-server.1= ${IP01}:2888:3888
-server.2= ${IP02}:2888:3888
-server.3= ${IP03}:2888:3888
+server.1=${IP01}:2888:3888
+server.2=${IP02}:2888:3888
+server.3=${IP03}:2888:3888
 EOF
     echo ${now_kafka_index} > ${work_dir}/zookeeper/data/myid
 }
