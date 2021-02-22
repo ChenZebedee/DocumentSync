@@ -24,8 +24,8 @@
 
     ```properties
     #扩大
-    max.request.size=5024000 
-    send.buffer.bytes=5024000  
+    max.request.size=5024000
+    send.buffer.bytes=5024000
     ```
 
 2. 修改server.properties
