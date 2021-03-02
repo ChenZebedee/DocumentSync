@@ -1,4 +1,4 @@
-#!/bin/bas
+#!/bin/bash
 
 ip_list=()
 host_name=()
@@ -109,7 +109,7 @@ mount_cdrpm() {
 #
 # To use this repo, put in your DVD and use it with the other repos too:
 #  yum --enablerepo=c7-media [command]
-#  
+#
 # or for ONLY the media repo, do this:
 #
 #  yum --disablerepo=\* --enablerepo=c7-media [command]
