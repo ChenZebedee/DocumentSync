@@ -32,3 +32,21 @@
     ```properties
     message.max.bytes=5024000
     ```
+
+# ogg the request included a message large报错
+## server端
+
+```
+message.max.bytes=12695150
+```
+
+## produce端
+
+```
+max.request.size=12695150
+```
+## consumer端
+
+```
+max.partition.fetch.bytes
+```
