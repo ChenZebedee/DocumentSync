@@ -8,3 +8,5 @@ something/team.pdf
 linux/V2RAY.md
 *.DS_Store
 .vscode/*
+something/*.pdf
+something/*.html
