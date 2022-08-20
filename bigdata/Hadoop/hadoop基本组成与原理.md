@@ -1,28 +1,28 @@
 <!-- TOC -->
 
-- [hadoop基本组成与原理](#hadoop%e5%9f%ba%e6%9c%ac%e7%bb%84%e6%88%90%e4%b8%8e%e5%8e%9f%e7%90%86)
-  - [Hdfs:分布式文件存储系统 放数据的地方](#hdfs%e5%88%86%e5%b8%83%e5%bc%8f%e6%96%87%e4%bb%b6%e5%ad%98%e5%82%a8%e7%b3%bb%e7%bb%9f-%e6%94%be%e6%95%b0%e6%8d%ae%e7%9a%84%e5%9c%b0%e6%96%b9)
-  - [NameNode 工作机制](#namenode-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6)
-  - [secondryNameNode 工作机制](#secondrynamenode-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6)
-  - [HDFS 读写工作过程：](#hdfs-%e8%af%bb%e5%86%99%e5%b7%a5%e4%bd%9c%e8%bf%87%e7%a8%8b)
-  - [DataNode 工作机制](#datanode-%e5%b7%a5%e4%bd%9c%e6%9c%ba%e5%88%b6)
-  - [MapReduce 工作流程](#mapreduce-%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b)
-  - [shuffle 机制](#shuffle-%e6%9c%ba%e5%88%b6)
+- [hadoop基本组成与原理](#hadoop基本组成与原理)
+  - [Hdfs:分布式文件存储系统 放数据的地方](#hdfs分布式文件存储系统-放数据的地方)
+  - [NameNode 工作机制](#namenode-工作机制)
+  - [secondryNameNode 工作机制](#secondrynamenode-工作机制)
+  - [HDFS 读写工作过程：](#hdfs-读写工作过程)
+  - [DataNode 工作机制](#datanode-工作机制)
+  - [MapReduce 工作流程](#mapreduce-工作流程)
+  - [shuffle 机制](#shuffle-机制)
     - [mapShuffle](#mapshuffle)
     - [ReduceShuffle](#reduceshuffle)
-    - [shuffle 各步骤详解](#shuffle-%e5%90%84%e6%ad%a5%e9%aa%a4%e8%af%a6%e8%a7%a3)
-  - [MapTask 机制](#maptask-%e6%9c%ba%e5%88%b6)
-    - [溢写阶段详情：](#%e6%ba%a2%e5%86%99%e9%98%b6%e6%ae%b5%e8%af%a6%e6%83%85)
-  - [ReduceTask 机制](#reducetask-%e6%9c%ba%e5%88%b6)
-  - [原理性知识要点](#%e5%8e%9f%e7%90%86%e6%80%a7%e7%9f%a5%e8%af%86%e8%a6%81%e7%82%b9)
-    - [关于kvbuffer、bufindex、kvmeta、kvindex的关系：](#%e5%85%b3%e4%ba%8ekvbufferbufindexkvmetakvindex%e7%9a%84%e5%85%b3%e7%b3%bb)
-    - [当环形缓冲区的kvbuffer和kvmeta相遇了怎么办？](#%e5%bd%93%e7%8e%af%e5%bd%a2%e7%bc%93%e5%86%b2%e5%8c%ba%e7%9a%84kvbuffer%e5%92%8ckvmeta%e7%9b%b8%e9%81%87%e4%ba%86%e6%80%8e%e4%b9%88%e5%8a%9e)
-    - [内存缓冲区设置：mapred.job.shuffle.input.buffer.percent](#%e5%86%85%e5%ad%98%e7%bc%93%e5%86%b2%e5%8c%ba%e8%ae%be%e7%bd%aemapredjobshuffleinputbufferpercent)
-    - [内存到磁盘的设置：mapred.job.shuffle.merge.percent](#%e5%86%85%e5%ad%98%e5%88%b0%e7%a3%81%e7%9b%98%e7%9a%84%e8%ae%be%e7%bd%aemapredjobshufflemergepercent)
-  - [Yarn：资源管理 任务调度平台 将mr1中的JobTracker进行了拆分--全局组件：Resourcemanager、应用组件：applicationMaster和日志管理：JobHistoryServer](#yarn%e8%b5%84%e6%ba%90%e7%ae%a1%e7%90%86-%e4%bb%bb%e5%8a%a1%e8%b0%83%e5%ba%a6%e5%b9%b3%e5%8f%b0-%e5%b0%86mr1%e4%b8%ad%e7%9a%84jobtracker%e8%bf%9b%e8%a1%8c%e4%ba%86%e6%8b%86%e5%88%86--%e5%85%a8%e5%b1%80%e7%bb%84%e4%bb%b6resourcemanager%e5%ba%94%e7%94%a8%e7%bb%84%e4%bb%b6applicationmaster%e5%92%8c%e6%97%a5%e5%bf%97%e7%ae%a1%e7%90%86jobhistoryserver)
-    - [Yarn运行步骤（8步）：](#yarn%e8%bf%90%e8%a1%8c%e6%ad%a5%e9%aa%a48%e6%ad%a5)
-    - [个人理解Yarn运行步骤:](#%e4%b8%aa%e4%ba%ba%e7%90%86%e8%a7%a3yarn%e8%bf%90%e8%a1%8c%e6%ad%a5%e9%aa%a4)
-    - [Yarn 运行步骤(10步):](#yarn-%e8%bf%90%e8%a1%8c%e6%ad%a5%e9%aa%a410%e6%ad%a5)
+    - [shuffle 各步骤详解](#shuffle-各步骤详解)
+  - [MapTask 机制](#maptask-机制)
+    - [溢写阶段详情：](#溢写阶段详情)
+  - [ReduceTask 机制](#reducetask-机制)
+  - [原理性知识要点](#原理性知识要点)
+    - [关于kvbuffer、bufindex、kvmeta、kvindex的关系：](#关于kvbufferbufindexkvmetakvindex的关系)
+    - [当环形缓冲区的kvbuffer和kvmeta相遇了怎么办？](#当环形缓冲区的kvbuffer和kvmeta相遇了怎么办)
+    - [内存缓冲区设置：mapred.job.shuffle.input.buffer.percent](#内存缓冲区设置mapredjobshuffleinputbufferpercent)
+    - [内存到磁盘的设置：mapred.job.shuffle.merge.percent](#内存到磁盘的设置mapredjobshufflemergepercent)
+  - [Yarn：资源管理 任务调度平台 将mr1中的JobTracker进行了拆分--全局组件：Resourcemanager、应用组件：applicationMaster和日志管理：JobHistoryServer](#yarn资源管理-任务调度平台-将mr1中的jobtracker进行了拆分--全局组件resourcemanager应用组件applicationmaster和日志管理jobhistoryserver)
+    - [Yarn运行步骤（8步）：](#yarn运行步骤8步)
+    - [个人理解Yarn运行步骤:](#个人理解yarn运行步骤)
+    - [Yarn 运行步骤(10步):](#yarn-运行步骤10步)
 
 <!-- /TOC -->
 # hadoop基本组成与原理
@@ -72,7 +72,7 @@ MapShuffle输出数据 -> 复制 -> 合并排序 -> ReduceTask
 3. sort（排序）：触发Spill时会先触发sort，将kvbuffer中的数据通过partition和key进行升序排序，但是操作的知识索引数据，即kvmeta，再深入一点是操作kvindex，最终数据会根据partition为单位聚集在一起，在partition内又按key排序。
 4. spill（溢写）：找到足够大的地方，并根据partition一个个的从kvbuffer中输出到创建的spill12.out文件中（每个partition数据叫段（segment））。
 5. 对partition的索引：用三元组记录这个partition在这个文件中的起始位置、原始数据长度、压缩之后的数据长度。直接存于内存，存不下就找到足够大的地方创建spill12.out.index文件，写入。并且在文件中记录了crc32的校验数据（？）。
-6. combiner（组合）:在spill写之前调用，用于累加或取最大值之类的，只能查询操作，不能有增改删操作。
+6. combiner（组合）- `不一定有`:在spill写之前调用，用于累加或取最大值之类的，只能查询操作，不能有增改删操作。
 7. Merge（合并）:当执行了多次spill时，会产生多个spill12.out和spill12.out.index文件，但是最终只要输出一个文件，需要merge操作来对这些文件进行合并，最终会产生两个文件，file.out和file.out.index文件。将partition对应的所有segment进行合并，变成一个完整的segment，分批进行，最小的先加。最终map的数据都是输出到磁盘上的。
 8. Copy（复制map输出的数据）：map任务结束后，通知父TaskTracker我更新了，爸爸就会通知爷爷JobTracker --就是心跳机制。JobTracker就记录了Map输出和TaskTracker的映射关系，Reduce定期向JobTracker获取Map的输出位置，只要一获取，就会复制到本地，进行下一步操作。
 9. Merge Sort(合并排序)：先放到内存缓冲区中，然后够放就在内存中处理了，不够就开始生成文件，然后copy完了就开始sort合并，最后输出一个整体的有序的数据块。
