@@ -98,3 +98,9 @@ git rm -r --cached 文件夹/文件
 git commit -m"删除xxxx"
 git push origin master
 ```
+
+## 增加一个推送端
+
+```bash
+git remote set-url --add xxxx
+```
