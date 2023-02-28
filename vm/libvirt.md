@@ -13,7 +13,6 @@
     }
 ```
 
-
 ## libvirt stop
 
 ```java
@@ -26,7 +25,6 @@
             throw new BusinessException(ErrorEnum.E_3000002_HOST_RUNNING.getErrorCode(), e.getMessage() + ":" + name);
     }
 ```
-
 
 ## libvirt create 创建
 

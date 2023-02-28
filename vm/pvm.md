@@ -17,8 +17,7 @@ pvm 配置等使用
 4. 开机自动挂载写入
 5. 挂载目录（也可以直接重启）
 
-
-```
+```shell
 root@pve:~# fdisk /dev/sdb
 
 Welcome to fdisk (util-linux 2.36.1).
