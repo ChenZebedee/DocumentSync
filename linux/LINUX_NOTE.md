@@ -42,3 +42,10 @@ EOF
 ```shell
 for i in $(host_name=`hostname`;le=${#host_name};prex_name=${host_name:0:((${le}-1))};cat /etc/hosts| grep ${prex_name}|awk '{print $2}');do scp jdk-8u181-linux-x64.tar.gz root@$i:;done
 ```
+
+## 生成定长递增
+
+```shell
+for mod_id in `seq -f 'A%011g' 0 9999`;do echo "fuck $mod_id";done
+```
+其中 `seq`  是生成递增数的工具, `-f` 是格式化结果 `'A%011g'` 表示A开头11位数字，不够0补齐， `0 9999` 表示 0到9999 步长默认为1

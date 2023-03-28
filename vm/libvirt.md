@@ -121,3 +121,33 @@ qemu-img create -f qcow2 /qcow/debian11_3.img 100G
 ## 机器类型
 
 改成 pc-q35-5.2
+
+## Debian 安装
+
+### 1. 替换apt源
+
+```shell
+cat << EOF > /etc/apt/sources.list
+deb https://mirrors.aliyun.com/debian/ bullseye main non-free contrib
+deb-src https://mirrors.aliyun.com/debian/ bullseye main non-free contrib
+deb https://mirrors.aliyun.com/debian-security/ bullseye-security main
+deb-src https://mirrors.aliyun.com/debian-security/ bullseye-security main
+deb https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib
+deb-src https://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib
+deb https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib
+deb-src https://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib
+EOF
+apt update
+```
+
+### 2. 安装
+
+```shell
+apt install qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils virtinst libvirt-daemon
+```
+
+### 3. 配置qemu
+
+```shell
+
+```
