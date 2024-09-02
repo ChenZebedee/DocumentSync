@@ -7,6 +7,7 @@
 - [ ] pypi是否可以搭建私库
 - [ ] make 的使用与教程
 - [ ] tox的使用与教程
+- [ ] git 的 pre-commit 使用
 
 > 2024-08-30: 首次计划,5个部分,每个部分平均两周多 包含(`python 爬虫 - AI`,`python web 接口`,`mongoDB 搭建与使用`,`sqlLite`,`react 基本使用与应用`)
 
@@ -294,10 +295,11 @@ poetry-test
 
 写完之后执行`poetry run pylint src/`即可进行代码静态检查
 
-Q: neovim中用什么检查?能否套用poetry的运行
-A: mason 中带有pylint的检测,可以直接使用
+> Q: neovim中用什么检查?能否套用poetry的运行<br>
+ A: mason 中带有pylint的检测,可以直接使用<br>
 
-时候可以在 `Git pre-commit` 加上 `pylint`
+> Q: git 提交的时候是否可以在 `Git pre-commit` 加上 `pylint`<br>
+A:
 
 ## python 爬虫 - AI
 
@@ -342,6 +344,14 @@ A: mason 中带有pylint的检测,可以直接使用
 
 1. [react 官方中文文档](https://zh-hans.react.dev/learn)
 2. [react 菜鸟基础](https://www.runoob.com/react/react-tutorial.html)
+
+## lazyvim 配置python支持
+
+### 选择郧西的虚拟环境
+
+### 代码提示
+
+### 代码格式化
 
 ## pypi 是什么
 
