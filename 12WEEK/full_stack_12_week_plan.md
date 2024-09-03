@@ -8,6 +8,7 @@
 - [ ] make 的使用与教程
 - [ ] tox的使用与教程
 - [ ] git 的 pre-commit 使用
+- [ ] pandas PyTorch NumPy 三个数据处理框架
 
 > 2024-08-30: 首次计划,5个部分,每个部分平均两周多 包含(`python 爬虫 - AI`,`python web 接口`,`mongoDB 搭建与使用`,`sqlLite`,`react 基本使用与应用`)
 
@@ -276,6 +277,13 @@ poetry-test
     └── __init__.py
 
 3 directories, 4 files
+```
+
+poetry 配置项目创建虚拟环境,将使用中的python环境应用到项目中
+
+```shell
+poetry config virtualenvs.in-project true
+poetry env use python
 ```
 
 ##### 各个方式的目录缺点分析
