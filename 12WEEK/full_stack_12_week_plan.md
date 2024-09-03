@@ -24,6 +24,59 @@
 - 版本库:gitlab
 - python代码管理:poetry
 
+### 基于 Miniconda poetry lazyvim的IDE搭建
+
+#### Miniconda 的安装与使用
+
+1. 安装
+
+  ```shell
+  wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  sh Miniconda3-latest-Linux-x86_64.sh
+  ```
+
+2. 创建新的环境
+
+  ```shell
+  conda create --name dev python=3.12
+  ```
+
+3. 配置启动默认环境为dev
+
+```shell
+conda config --set env_prompt '(dev)'
+```
+
+#### neovim 插件添加
+
+neovim 使用lazyVim进行插件管理
+
+lazyVim 添加 [venv-selector](https://github.com/linux-cultist/venv-selector.nvim)
+怎么安装看文档,很简单,再lazyVim的 `~/.config/nvim/lua/plugins` 目录下随便添加一个文件就可以了
+
+我的添加模板
+
+```lua
+return {
+    "linux-cultist/venv-selector.nvim",
+    dependencies = { "neovim/nvim-lspconfig", "nvim-telescope/telescope.nvim", "mfussenegger/nvim-dap-python" },
+    opts = {
+        -- Your options go here
+        anaconda_base_path = "${HOME}/miniconda3/",
+        anaconda_envs_path = "${HOME}/miniconda3/envs",
+        -- name = "venv",
+        -- auto_refresh = false
+    },
+    event = "VeryLazy", -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
+    keys = {
+        -- Keymap to open VenvSelector to pick a venv.
+        { "<leader>vs", "<cmd>VenvSelect<cr>" },
+        -- Keymap to retrieve the venv from a cache (the one previously used for the same project directory).
+        { "<leader>vc", "<cmd>VenvSelectCached<cr>" },
+    },
+}
+```
+
 ## python 项目管理
 
 ### 学习资料
