@@ -9,6 +9,7 @@
 - [ ] tox的使用与教程
 - [ ] git 的 pre-commit 使用
 - [ ] pandas PyTorch NumPy 三个数据处理框架
+- [ ] 日志模块 loggin 与 loguru
 
 > 2024-08-30: 首次计划,5个部分,每个部分平均两周多 包含(`python 爬虫 - AI`,`python web 接口`,`mongoDB 搭建与使用`,`sqlLite`,`react 基本使用与应用`)
 
@@ -374,6 +375,65 @@ A:
 4. [Requests: 让 HTTP 服务人类](https://requests.readthedocs.io/projects/cn/zh-cn/latest/)
 5. [playwright 官方文档](https://playwright.dev/python/docs/intro)
 6. AI爬虫 - TODO
+
+#### Beautiful使用
+
+根据官网使用样例:
+
+```python
+from bs4 import BeautifulSoup
+
+html_doc = """<html><head><title>The Dormouse's story</title></head>
+<body>
+<p class="title"><b>The Dormouse's story</b></p>
+
+<p class="story">Once upon a time there were three little sisters; and their names were
+<a href="http://example.com/elsie" class="sister" id="link1">Elsie</a>,
+<a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
+<a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
+and they lived at the bottom of a well.</p>
+
+<p class="story">...</p>
+"""
+
+soup = BeautifulSoup(html_doc, "html.parser")
+
+print(soup.prettify())
+
+# 节点操作
+for link in soup.find_all("a"):
+    # 打印所有节点参数
+    print(link.attrs)
+    # 获取某一个指定参数
+    print(link.get("href"))
+    # 添加节点参数
+    link['sb']="sbaaaaaa"
+    print(link.attrs)
+    # 删除节点参数
+    del link['sb']
+    print(link.attrs)
+# http://example.com/elsie
+# http://example.com/lacie
+# http://example.com/tillie
+
+# 读取文件获取
+# with open("${file}") as fq:
+#    soupa = BeautifulSoup(fq, "html.parser")
+
+# 直接获取字符串
+print(
+    BeautifulSoup(
+        "<html><head></head><body>Sacr&eacute; bleu!</body></html>", "html.parser"
+    )
+)
+
+soup = BeautifulSoup('<b class="boldest">Extremely bold</b>', 'html.parser')
+tag = soup.b
+print(tag.string)
+# 'Extremely bold'
+print(type(tag.string))
+# <class 'bs4.element.NavigableString'>
+```
 
 ## python web 接口
 
