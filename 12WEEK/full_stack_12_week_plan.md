@@ -101,6 +101,8 @@ return {
 - CI/CD 添加代码质量检测
 - Git pre-commit 钩子,进行代码检测
 
+#### CI/CD 使用
+
 #### 创建项目工具
 
 基本上搜到的都是 `CookieCutter` `PyScaffold` `PyBuilder` `Poetry`
@@ -492,4 +494,4 @@ print(type(tag.string))
 
 ### 第一周总结
 
-总的来说,学的还是挺多东西的,起码我本地开发不是问题,其次关于python的项目也是了解了,下周就学习gitlab的ci/cd 的步骤,然后实现16上的自动化一个hello world.
+总的来说,学的还是挺多东西的,起码我本地开发不是问题,其次关于python的项目也是了解了,下周就学习gitlab的ci/cd 的步骤,然后实现16上的自动化一个hello world.还进行了 python 的Beautiful使用
