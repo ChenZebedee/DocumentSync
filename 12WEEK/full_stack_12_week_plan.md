@@ -103,6 +103,9 @@ return {
 
 #### CI/CD 使用
 
+- gitlab 搭建与使用
+- k8s 搭建
+
 #### 创建项目工具
 
 基本上搜到的都是 `CookieCutter` `PyScaffold` `PyBuilder` `Poetry`
