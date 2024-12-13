@@ -1,6 +1,6 @@
 # react 学习
 
-## 搭建 React 开发环境 
+## 搭建 React 开发环境
 
 ### 安装 fnm node多版本管理工具 以及安装 nodejs
 
@@ -15,7 +15,6 @@ curl -fsSL https://fnm.vercel.app/install | bash
 # 推出shell之后重连
 fnm install 20
 ```
-
 
 ### 创建 React 项目
 
@@ -97,3 +96,54 @@ We suggest that you begin by typing:
 
 Happy hacking!
 ```
+
+### 目录解析
+
+```
+my-app/
+├── node_modules/          # 项目依赖
+├── public/                # 静态资源（HTML、图片等）
+│   └── index.html         # 主 HTML 文件
+├── src/                   # React 源代码
+│   ├── App.js             # 主组件
+│   ├── index.js           # 入口文件
+│   ├── App.css            # 样式文件
+│   └── ...                # 其他文件
+├── package.json           # 项目配置和依赖
+└── README.md              # 项目说明
+```
+
+## 开始学习编程
+
+### JSX基础
+
+用js写HTML ，JSX会被React翻译成HTML，样例：
+
+```js
+const element = <h1>Hello, React!</h1>;
+```
+
+--翻译成如下--->
+
+```js
+const element = React.createElement('h1', null, 'Hello, React!');
+```
+
+ERROR example:
+
+```js
+return (
+  <h1>标题</h1>
+  <p>段落内容</p>
+);
+```
+
+### 组件
+
+#### 函数组件
+
+首字母必须大写，不然不识别，说是，函数就相当于类？垃圾东西
+
+#### 类组件
+
+类组件用于需要管理状态或复杂逻辑的场景，但现在更多的功能被 Hooks 取代。
