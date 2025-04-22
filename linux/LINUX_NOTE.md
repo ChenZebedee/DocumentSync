@@ -76,3 +76,8 @@ sed ":a;N;s/\\n/\\\\n/g;ta"
 vert diffsplit otherbufferName
 ```
 
+## neovim 使用sudo保存
+
+```shell
+:w !sudo tee %
+```
